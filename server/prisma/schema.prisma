@@ -1,0 +1,261 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum Speciality {
+  GENERAL_PHYSICIAN
+  CONSULTING_PHYSICIAN
+  DIABETOLOGIST
+  CARDIOLOGIST
+  NEUROLOGIST
+  ORTHOPEDIC
+  PEDIATRICIAN
+  GYNECOLOGIST
+  ENT
+  ENDOCRINOLOGIST
+  GASTROENTEROLOGIST
+}
+
+enum Grade {
+  A
+  B
+  C
+}
+
+enum TimeSlot {
+  MORNING
+  AFTERNOON
+  EVENING
+}
+
+enum DoctorStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+enum PlanType {
+  DAILY
+  WEEKLY
+  MONTHLY
+}
+
+enum PlanStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum PlanItemStatus {
+  PENDING
+  VISITED
+  SKIPPED
+  RESCHEDULED
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  refreshToken String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Area {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  color       String?  // hex color for map markers/badges
+  beats       Beat[]
+  doctors     Doctor[]
+  chemists    Chemist[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Beat {
+  id          String   @id @default(cuid())
+  name        String
+  areaId      String
+  area        Area     @relation(fields: [areaId], references: [id], onDelete: Cascade)
+  description String?
+  dayOfWeek   Int?     // 0=Sun, 1=Mon...6=Sat — suggested visit day
+  doctors     Doctor[]
+  chemists    Chemist[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([name, areaId])
+  @@index([areaId])
+}
+
+model Doctor {
+  id            String       @id @default(cuid())
+  name          String
+  speciality    Speciality
+  grade         Grade        @default(B)
+  hospital      String?
+  clinic        String?
+  areaId        String?
+  area          Area?        @relation(fields: [areaId], references: [id], onDelete: SetNull)
+  beatId        String?
+  beat          Beat?        @relation(fields: [beatId], references: [id], onDelete: SetNull)
+  address       String?
+  latitude      Float?
+  longitude     Float?
+  googleMapsUrl String?
+
+  // Timings (stored as "HH:MM" strings)
+  morningStart   String?
+  morningEnd     String?
+  afternoonStart String?
+  afternoonEnd   String?
+  eveningStart   String?
+  eveningEnd     String?
+
+  // Preferences
+  preferredDays Int[]     // Array of day numbers [1,3,5] = Mon, Wed, Fri
+  preferredTime TimeSlot? // MORNING, AFTERNOON, EVENING
+  exStationDays Int[]     // Days when doctor is ex-station
+
+  // Contact
+  assistantName String?
+  phone         String?
+  notes         String?
+
+  // Classification
+  status         DoctorStatus @default(ACTIVE)
+  favorite       Boolean      @default(false)
+  priority       Int          @default(5) // 1=highest, 10=lowest
+  visitFrequency Int          @default(2) // Visits per month: 1, 2, or 3
+
+  // Linked chemist/pharmacy
+  chemistId String?
+  chemist   Chemist? @relation(fields: [chemistId], references: [id], onDelete: SetNull)
+
+  visits    Visit[]
+  planItems PlanItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([areaId])
+  @@index([beatId])
+  @@index([speciality])
+  @@index([grade])
+  @@index([status])
+  @@index([chemistId])
+}
+
+model Chemist {
+  id           String   @id @default(cuid())
+  name         String
+  pharmacyName String?
+  areaId       String?
+  area         Area?    @relation(fields: [areaId], references: [id], onDelete: SetNull)
+  beatId       String?
+  beat         Beat?    @relation(fields: [beatId], references: [id], onDelete: SetNull)
+  address      String?
+  phone        String?
+  latitude     Float?
+  longitude    Float?
+  notes        String?
+  doctors      Doctor[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([areaId])
+  @@index([beatId])
+}
+
+model Visit {
+  id             String    @id @default(cuid())
+  doctorId       String
+  doctor         Doctor    @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  visitDate      DateTime
+  remarks        String?
+  products       String[]  // Products detailed (legacy)
+  duration       Int?      // Duration in minutes
+  followUpDate   DateTime?
+  skipped        Boolean   @default(false)
+  skipReason     String?
+  completed      Boolean   @default(false)
+  planItemId     String?   @unique
+  planItem       PlanItem? @relation(fields: [planItemId], references: [id], onDelete: SetNull)
+
+  // MedRep-specific fields
+  brandsPromoted String[]  // Brands promoted during visit
+  brandsWritten  String[]  // What the doctor actually prescribed
+  doctorFeedback String?   // What the doctor said/committed
+  followUpBrand  String?   // Which brand the follow-up is for
+  rxCommitment   Int?      // Number of Rx doctor committed
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([doctorId])
+  @@index([visitDate])
+  @@index([followUpDate])
+}
+
+model Brand {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  category  String?  // Product line grouping
+  isActive  Boolean  @default(true)
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Plan {
+  id        String     @id @default(cuid())
+  name      String
+  date      DateTime   // Plan date
+  type      PlanType   @default(DAILY)
+  status    PlanStatus @default(DRAFT)
+  notes     String?
+  items     PlanItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([date])
+  @@index([type])
+}
+
+model PlanItem {
+  id            String         @id @default(cuid())
+  planId        String
+  plan          Plan           @relation(fields: [planId], references: [id], onDelete: Cascade)
+  doctorId      String
+  doctor        Doctor         @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  order         Int            // Visit sequence order
+  scheduledTime String?        // Planned time "HH:MM"
+  timeSlot      TimeSlot?
+  status        PlanItemStatus @default(PENDING)
+  visit         Visit?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([planId])
+  @@index([doctorId])
+}
