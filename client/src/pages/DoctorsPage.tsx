@@ -7,7 +7,7 @@ import { SPECIALITY_LABELS, SPECIALITY_COLORS, GRADE_COLORS, DAYS_OF_WEEK } from
 import { VisitRecordModal } from '../components/VisitRecordModal';
 import {
   Search, Plus, Star, MapPin, Phone, Clock, SortAsc,
-  Building2, Pill as PillIcon, Filter, X, Check
+  Building2, Pill as PillIcon, Filter, X, Check, FileDown
 } from 'lucide-react';
 
 type SortOption = 'name' | 'grade' | 'area' | 'speciality' | 'visitFrequency';
@@ -103,13 +103,22 @@ export function DoctorsPage() {
               <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#fff', margin: '0 0 4px 0', letterSpacing: '-0.5px' }}>Doctors Directory</h1>
               <p style={{ fontSize: '13px', color: '#8e8e9e', margin: 0, fontWeight: 500 }}>{filtered.length} of {doctors.length} doctors</p>
             </div>
-            <button onClick={() => navigate('/doctors/new')} style={{
-              display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '12px',
-              background: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)', border: 'none', color: '#fff',
-              fontWeight: 600, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(245,158,11,0.2)'
-            }}>
-              <Plus size={16} strokeWidth={2.5} /> Add New
-            </button>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button onClick={() => navigate('/doctors/import')} style={{
+                display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '12px',
+                backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#fff',
+                fontWeight: 600, fontSize: '14px', cursor: 'pointer', transition: 'all 0.2s'
+              }}>
+                <FileDown size={16} /> Import
+              </button>
+              <button onClick={() => navigate('/doctors/new')} style={{
+                display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '12px',
+                background: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)', border: 'none', color: '#fff',
+                fontWeight: 600, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(245,158,11,0.2)'
+              }}>
+                <Plus size={16} strokeWidth={2.5} /> Add New
+              </button>
+            </div>
           </div>
 
           {/* Search & Basic Filters */}

@@ -1,15 +1,16 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import prisma from '../lib/prisma.js';
-import { authenticate } from '../middleware/auth.middleware.js';
+import { authenticate, AuthRequest } from '../middleware/auth.middleware.js';
 import { AppError } from '../middleware/error.middleware.js';
 
 const router = Router();
 router.use(authenticate);
 
 // GET /api/areas
-router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
+router.get('/', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const areas = await prisma.area.findMany({
+      where: { userId: req.userId! },
       include: {
         _count: { select: { doctors: true, beats: true, chemists: true } },
         beats: {
@@ -25,10 +26,10 @@ router.get('/', async (_req: Request, res: Response, next: NextFunction) => {
 });
 
 // GET /api/areas/:id
-router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/:id', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const area = await prisma.area.findUnique({
-      where: { id: req.params.id },
+      where: { id: req.params.id, userId: req.userId! },
       include: {
         beats: {
           include: { _count: { select: { doctors: true } } },
@@ -51,10 +52,10 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 // POST /api/areas
-router.post('/', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const area = await prisma.area.create({
-      data: req.body,
+      data: { ...req.body, userId: req.userId! },
       include: { _count: { select: { doctors: true, beats: true } } },
     });
     res.status(201).json({ success: true, data: area });
@@ -64,10 +65,10 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 // PUT /api/areas/:id
-router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
+router.put('/:id', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const area = await prisma.area.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id, userId: req.userId! },
       data: req.body,
     });
     res.json({ success: true, data: area });
@@ -77,9 +78,9 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 // DELETE /api/areas/:id
-router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
+router.delete('/:id', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    await prisma.area.delete({ where: { id: req.params.id } });
+    await prisma.area.delete({ where: { id: req.params.id, userId: req.userId! } });
     res.json({ success: true, message: 'Area deleted' });
   } catch (error) {
     next(error);
@@ -87,10 +88,10 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
 });
 
 // GET /api/areas/:id/doctors
-router.get('/:id/doctors', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/:id/doctors', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const doctors = await prisma.doctor.findMany({
-      where: { areaId: req.params.id },
+      where: { areaId: req.params.id, userId: req.userId! },
       include: {
         beat: { select: { id: true, name: true } },
         chemist: { select: { id: true, name: true, pharmacyName: true } },

@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { useAuthStore } from '../stores/authStore';
 import { toast } from '../stores/toastStore';
 import { Stethoscope, Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react';
 
 export function LoginPage() {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const { login, loginWithGoogle } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -25,6 +26,22 @@ export function LoginPage() {
       navigate('/', { replace: true });
     } catch (err: any) {
       setError(err.response?.data?.message || 'Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setError('');
+    setIsLoading(true);
+    try {
+      if (credentialResponse.credential) {
+        await loginWithGoogle(credentialResponse.credential);
+        toast.success('Welcome back!');
+        navigate('/', { replace: true });
+      }
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Google Sign-In failed.');
     } finally {
       setIsLoading(false);
     }
@@ -86,6 +103,24 @@ export function LoginPage() {
           <p style={{ fontSize: '14.5px', color: '#8e8e9e', margin: 0 }}>
             Sign in to manage your territory
           </p>
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => setError('Google Sign-In failed. Please try again.')}
+            theme="filled_black"
+            shape="pill"
+            size="large"
+            text="continue_with"
+            width="320"
+          />
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+          <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.05)' }} />
+          <span style={{ color: '#5a5a68', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase' }}>OR</span>
+          <div style={{ flex: 1, height: '1px', backgroundColor: 'rgba(255,255,255,0.05)' }} />
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>

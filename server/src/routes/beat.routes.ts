@@ -1,16 +1,16 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import prisma from '../lib/prisma.js';
-import { authenticate } from '../middleware/auth.middleware.js';
+import { authenticate, AuthRequest } from '../middleware/auth.middleware.js';
 import { AppError } from '../middleware/error.middleware.js';
 
 const router = Router();
 router.use(authenticate);
 
 // GET /api/beats
-router.get('/', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { area } = req.query;
-    const where: any = {};
+    const where: any = { userId: req.userId! };
     if (area) where.areaId = String(area);
 
     const beats = await prisma.beat.findMany({
@@ -28,10 +28,10 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 // GET /api/beats/:id
-router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/:id', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const beat = await prisma.beat.findUnique({
-      where: { id: req.params.id },
+      where: { id: req.params.id, userId: req.userId! },
       include: {
         area: true,
         doctors: {
@@ -49,10 +49,10 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 // POST /api/beats
-router.post('/', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const beat = await prisma.beat.create({
-      data: req.body,
+      data: { ...req.body, userId: req.userId! },
       include: {
         area: { select: { id: true, name: true } },
         _count: { select: { doctors: true } },
@@ -65,10 +65,10 @@ router.post('/', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 // PUT /api/beats/:id
-router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
+router.put('/:id', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const beat = await prisma.beat.update({
-      where: { id: req.params.id },
+      where: { id: req.params.id, userId: req.userId! },
       data: req.body,
       include: { area: { select: { id: true, name: true } } },
     });
@@ -79,9 +79,9 @@ router.put('/:id', async (req: Request, res: Response, next: NextFunction) => {
 });
 
 // DELETE /api/beats/:id
-router.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
+router.delete('/:id', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
-    await prisma.beat.delete({ where: { id: req.params.id } });
+    await prisma.beat.delete({ where: { id: req.params.id, userId: req.userId! } });
     res.json({ success: true, message: 'Beat deleted' });
   } catch (error) {
     next(error);
@@ -89,7 +89,7 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
 });
 
 // POST /api/beats/:id/reassign — Reassign doctors from one beat to another
-router.post('/:id/reassign', async (req: Request, res: Response, next: NextFunction) => {
+router.post('/:id/reassign', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { targetBeatId, doctorIds } = req.body;
     if (!targetBeatId || !doctorIds?.length) {
@@ -97,7 +97,7 @@ router.post('/:id/reassign', async (req: Request, res: Response, next: NextFunct
     }
 
     await prisma.doctor.updateMany({
-      where: { id: { in: doctorIds }, beatId: req.params.id },
+      where: { id: { in: doctorIds }, beatId: req.params.id, userId: req.userId! },
       data: { beatId: targetBeatId },
     });
 

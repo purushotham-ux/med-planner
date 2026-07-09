@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { useEffect } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { ToastContainer } from './components/ui/Toast';
@@ -9,6 +10,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { DoctorsPage } from './pages/DoctorsPage';
 import { DoctorDetailPage } from './pages/DoctorDetailPage';
 import { DoctorFormPage } from './pages/DoctorFormPage';
+import { ImportPage } from './pages/ImportPage';
 import { AreasPage } from './pages/AreasPage';
 import { PlanPage } from './pages/PlanPage';
 import { MapPage } from './pages/MapPage';
@@ -51,7 +53,8 @@ export default function App() {
   }, [checkAuth]);
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <GoogleOAuthProvider clientId={import.meta.env.VITE_GOOGLE_CLIENT_ID || ''}>
+      <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <ToastContainer />
         <Routes>
@@ -67,6 +70,7 @@ export default function App() {
             <Route index element={<DashboardPage />} />
             <Route path="doctors" element={<DoctorsPage />} />
             <Route path="doctors/new" element={<DoctorFormPage />} />
+            <Route path="doctors/import" element={<ImportPage />} />
             <Route path="doctors/:id" element={<DoctorDetailPage />} />
             <Route path="doctors/:id/edit" element={<DoctorFormPage />} />
             <Route path="areas" element={<AreasPage />} />
@@ -78,5 +82,6 @@ export default function App() {
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>
+    </GoogleOAuthProvider>
   );
 }

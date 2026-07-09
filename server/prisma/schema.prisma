@@ -74,8 +74,19 @@ model User {
   id           String   @id @default(cuid())
   name         String
   email        String   @unique
-  passwordHash String
+  passwordHash String?
+  googleId     String?  @unique
+  avatarUrl    String?
   refreshToken String?
+  
+  // Multi-tenant relationships
+  doctors      Doctor[]
+  plans        Plan[]
+  visits       Visit[]
+  areas        Area[]
+  beats        Beat[]
+  chemists     Chemist[]
+
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -85,11 +96,15 @@ model Area {
   name        String   @unique
   description String?
   color       String?  // hex color for map markers/badges
+  userId      String  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   beats       Beat[]
   doctors     Doctor[]
   chemists    Chemist[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model Beat {
@@ -99,6 +114,8 @@ model Beat {
   area        Area     @relation(fields: [areaId], references: [id], onDelete: Cascade)
   description String?
   dayOfWeek   Int?     // 0=Sun, 1=Mon...6=Sat — suggested visit day
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   doctors     Doctor[]
   chemists    Chemist[]
   createdAt   DateTime @default(now())
@@ -106,6 +123,7 @@ model Beat {
 
   @@unique([name, areaId])
   @@index([areaId])
+  @@index([userId])
 }
 
 model Doctor {
@@ -152,6 +170,9 @@ model Doctor {
   chemistId String?
   chemist   Chemist? @relation(fields: [chemistId], references: [id], onDelete: SetNull)
 
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   visits    Visit[]
   planItems PlanItem[]
 
@@ -164,6 +185,7 @@ model Doctor {
   @@index([grade])
   @@index([status])
   @@index([chemistId])
+  @@index([userId])
 }
 
 model Chemist {
@@ -179,12 +201,15 @@ model Chemist {
   latitude     Float?
   longitude    Float?
   notes        String?
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   doctors      Doctor[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
   @@index([areaId])
   @@index([beatId])
+  @@index([userId])
 }
 
 model Visit {
@@ -209,12 +234,16 @@ model Visit {
   followUpBrand  String?   // Which brand the follow-up is for
   rxCommitment   Int?      // Number of Rx doctor committed
 
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
 
   @@index([doctorId])
   @@index([visitDate])
   @@index([followUpDate])
+  @@index([userId])
 }
 
 model Brand {
@@ -234,12 +263,15 @@ model Plan {
   type      PlanType   @default(DAILY)
   status    PlanStatus @default(DRAFT)
   notes     String?
+  userId    String
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   items     PlanItem[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
   @@index([date])
   @@index([type])
+  @@index([userId])
 }
 
 model PlanItem {

@@ -1,12 +1,12 @@
-import { Router, Request, Response, NextFunction } from 'express';
+import { Router, Response, NextFunction } from 'express';
 import prisma from '../lib/prisma.js';
-import { authenticate } from '../middleware/auth.middleware.js';
+import { authenticate, AuthRequest } from '../middleware/auth.middleware.js';
 
 const router = Router();
 router.use(authenticate);
 
 // GET /api/dashboard/today
-router.get('/today', async (_req: Request, res: Response, next: NextFunction) => {
+router.get('/today', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -28,6 +28,7 @@ router.get('/today', async (_req: Request, res: Response, next: NextFunction) =>
       // Today's active plan
       prisma.plan.findFirst({
         where: {
+          userId: req.userId!,
           date: { gte: today, lt: tomorrow },
           status: { in: ['DRAFT', 'ACTIVE'] },
         },
@@ -51,31 +52,32 @@ router.get('/today', async (_req: Request, res: Response, next: NextFunction) =>
 
       // Today's visits count
       prisma.visit.count({
-        where: { visitDate: { gte: today, lt: tomorrow }, completed: true },
+        where: { userId: req.userId!, visitDate: { gte: today, lt: tomorrow }, completed: true },
       }),
 
       // Total doctors
-      prisma.doctor.count(),
+      prisma.doctor.count({ where: { userId: req.userId! } }),
 
       // Active doctors
-      prisma.doctor.count({ where: { status: 'ACTIVE' } }),
+      prisma.doctor.count({ where: { userId: req.userId!, status: 'ACTIVE' } }),
 
       // Total chemists
-      prisma.chemist.count(),
+      prisma.chemist.count({ where: { userId: req.userId! } }),
 
       // Doctors who prefer today
       prisma.doctor.count({
-        where: { status: 'ACTIVE', preferredDays: { has: dayOfWeek } },
+        where: { userId: req.userId!, status: 'ACTIVE', preferredDays: { has: dayOfWeek } },
       }),
 
       // Ex-station today
       prisma.doctor.count({
-        where: { status: 'ACTIVE', exStationDays: { has: dayOfWeek } },
+        where: { userId: req.userId!, status: 'ACTIVE', exStationDays: { has: dayOfWeek } },
       }),
 
       // Pending follow-ups (due within next 7 days)
       prisma.visit.findMany({
         where: {
+          userId: req.userId!,
           followUpDate: {
             gte: today,
             lte: new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000),
@@ -92,6 +94,7 @@ router.get('/today', async (_req: Request, res: Response, next: NextFunction) =>
       prisma.visit.groupBy({
         by: ['visitDate'],
         where: {
+          userId: req.userId!,
           visitDate: { gte: new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000) },
           completed: true,
         },
@@ -134,7 +137,7 @@ router.get('/today', async (_req: Request, res: Response, next: NextFunction) =>
 });
 
 // GET /api/dashboard/stats
-router.get('/stats', async (_req: Request, res: Response, next: NextFunction) => {
+router.get('/stats', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const thisMonth = new Date();
     thisMonth.setDate(1);
@@ -148,27 +151,28 @@ router.get('/stats', async (_req: Request, res: Response, next: NextFunction) =>
       totalVisits,
       areaStats,
     ] = await Promise.all([
-      prisma.doctor.count({ where: { status: 'ACTIVE' } }),
+      prisma.doctor.count({ where: { userId: req.userId!, status: 'ACTIVE' } }),
 
       prisma.doctor.groupBy({
         by: ['grade'],
-        where: { status: 'ACTIVE' },
+        where: { userId: req.userId!, status: 'ACTIVE' },
         _count: true,
       }),
 
       prisma.doctor.groupBy({
         by: ['speciality'],
-        where: { status: 'ACTIVE' },
+        where: { userId: req.userId!, status: 'ACTIVE' },
         _count: true,
       }),
 
       prisma.visit.count({
-        where: { visitDate: { gte: thisMonth }, completed: true },
+        where: { userId: req.userId!, visitDate: { gte: thisMonth }, completed: true },
       }),
 
-      prisma.visit.count({ where: { completed: true } }),
+      prisma.visit.count({ where: { userId: req.userId!, completed: true } }),
 
       prisma.area.findMany({
+        where: { userId: req.userId! },
         select: {
           id: true,
           name: true,
@@ -181,7 +185,7 @@ router.get('/stats', async (_req: Request, res: Response, next: NextFunction) =>
 
     // Coverage: unique doctors visited this month / total active
     const uniqueVisited = await prisma.visit.findMany({
-      where: { visitDate: { gte: thisMonth }, completed: true },
+      where: { userId: req.userId!, visitDate: { gte: thisMonth }, completed: true },
       distinct: ['doctorId'],
       select: { doctorId: true },
     });
