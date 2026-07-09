@@ -69,10 +69,10 @@ export function DashboardPage() {
   const pct = data?.planProgress?.percentage || 0;
 
   return (
-    <div style={{ padding: '24px 24px 100px 24px', maxWidth: '1200px', margin: '0 auto', color: '#fff' }}>
+    <div className="p-4 md:p-6 pb-28 md:pb-8 max-w-7xl mx-auto text-white">
       
       {/* 1. Header Area */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '40px' }}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <p style={{ fontSize: '13px', color: '#8e8e9e', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
             {greeting}
@@ -90,10 +90,8 @@ export function DashboardPage() {
         </button>
       </div>
 
-      {/* 2. Key Metrics (Clean, open stats row) */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))', gap: '24px', marginBottom: '48px'
-      }}>
+      {/* 2. Key Stats (4 columns on desktop, 2 on mobile) */}
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 mb-10">
         <StatItem icon={<Users size={16}/>} label="Total Doctors" value={data?.stats.totalDoctors || 0} color="#f59e0b" onClick={() => navigate('/doctors')} />
         <StatItem icon={<CalendarCheck size={16}/>} label="Visited Today" value={data?.stats.todaysVisits || 0} color="#34d399" />
         <StatItem icon={<Star size={16}/>} label="Preferred" value={data?.stats.preferredToday || 0} color="#f97316" onClick={() => navigate('/doctors')} />
@@ -101,16 +99,16 @@ export function DashboardPage() {
         <StatItem icon={<AlertTriangle size={16}/>} label="Ex-Station" value={data?.stats.exStationToday || 0} color="#f87171" />
       </div>
 
-      {/* 3. Main Content Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 320px), 1fr))', gap: '32px' }}>
+      {/* 3. Main Content Split */}
+      <div className="flex flex-col lg:flex-row gap-8">
         
         {/* Left Column: Today's Plan */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+        <div className="flex-1 flex flex-col gap-6">
           
           {/* Plan Hero Card */}
-          <div onClick={() => navigate('/plan')} style={{
-            position: 'relative', padding: '28px', borderRadius: '24px', cursor: 'pointer', overflow: 'hidden',
-            background: 'linear-gradient(145deg, #16161a 0%, #0f0f12 100%)', border: '1px solid rgba(255,255,255,0.03)'
+          <div onClick={() => navigate('/plan')} className="relative p-6 md:p-8 rounded-3xl cursor-pointer overflow-hidden shadow-2xl" style={{
+            background: 'linear-gradient(135deg, #1e1e24 0%, #121216 100%)',
+            border: '1px solid rgba(52,211,153,0.1)'
           }}>
             <div style={{ position: 'absolute', top: 0, right: 0, width: '200px', height: '200px', background: 'rgba(245,158,11,0.05)', borderRadius: '50%', filter: 'blur(50px)', transform: 'translate(30%, -30%)', pointerEvents: 'none' }} />
             
@@ -166,7 +164,7 @@ export function DashboardPage() {
         </div>
 
         {/* Right Column: Lists */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        <div className="w-full lg:w-[400px] flex flex-col gap-8">
           
           {/* Available Now */}
           {availableNow.length > 0 && (

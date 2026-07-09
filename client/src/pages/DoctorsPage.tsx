@@ -95,11 +95,8 @@ export function DoctorsPage() {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', backgroundColor: '#0a0a0f' }}>
       
       {/* Sticky Header Area */}
-      <div style={{ 
-        position: 'sticky', top: 0, zIndex: 50, backgroundColor: 'rgba(10,10,15,0.95)', backdropFilter: 'blur(12px)',
-        padding: '24px 24px 16px 24px', borderBottom: '1px solid rgba(255,255,255,0.05)'
-      }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="sticky top-0 z-50 bg-[#0a0a0f]/95 backdrop-blur-md border-b border-white/5">
+        <div className="p-4 md:p-6 pb-4 md:pb-4 max-w-7xl mx-auto">
           
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
             <div>
@@ -211,7 +208,7 @@ export function DoctorsPage() {
       </div>
 
       {/* Main List Area */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '24px', paddingBottom: '100px' }}>
+      <div className="flex-1 overflow-y-auto p-4 md:p-6 pb-28 md:pb-6">
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           
           {isLoading ? (
