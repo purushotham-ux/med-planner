@@ -19,8 +19,8 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     }
 
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      throw new AppError('Invalid email or password', 401);
+    if (!user || !user.passwordHash) {
+      throw new AppError('Invalid credentials or user registered via Google', 401);
     }
 
     const isValid = await bcrypt.compare(password, user.passwordHash);
