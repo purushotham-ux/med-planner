@@ -203,7 +203,7 @@ export function VisitHistoryPage() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginBottom: '16px', flex: 1 }}>
                         {visit.doctorFeedback && (
                           <div style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', padding: '10px 12px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
-                            <span style={{ color: '#5a5a68', fontSize: '18px', leading: 1, marginTop: '-4px' }}>"</span>
+                            <span style={{ color: '#5a5a68', fontSize: '18px', lineHeight: 1, marginTop: '-4px' }}>"</span>
                             <p style={{ margin: 0, fontSize: '12px', color: '#b0b0bc', fontStyle: 'italic', lineHeight: 1.5 }}>
                               {visit.doctorFeedback}
                             </p>

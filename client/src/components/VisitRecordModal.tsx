@@ -7,7 +7,7 @@ import type { Doctor, Brand, ApiResponse } from '../types';
 import { SPECIALITY_LABELS, GRADE_COLORS } from '../types';
 import {
   Check, SkipForward, Clock, Package,
-  CalendarPlus, Loader2, FileText, Pill, Search, Hash, X, StickyNote
+  CalendarPlus, Loader2, FileText, Pill, Search, X, StickyNote
 } from 'lucide-react';
 
 const DURATION_PRESETS = [5, 10, 15, 20, 30, 45];

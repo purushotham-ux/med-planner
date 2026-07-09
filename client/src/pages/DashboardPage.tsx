@@ -5,8 +5,8 @@ import type { DashboardData, ApiResponse, Doctor } from '../types';
 import { SPECIALITY_LABELS, GRADE_COLORS } from '../types';
 import {
   Users, CalendarCheck, MapPin, Clock, Star,
-  AlertTriangle, TrendingUp, ChevronRight,
-  Stethoscope, Phone, Package, Plus
+  AlertTriangle, TrendingUp,
+  Phone, Package, Plus
 } from 'lucide-react';
 
 function ProgressRing({ percentage, size = 64, stroke = 6 }: { percentage: number; size?: number; stroke?: number }) {
