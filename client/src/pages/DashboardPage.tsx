@@ -69,10 +69,10 @@ export function DashboardPage() {
   const pct = data?.planProgress?.percentage || 0;
 
   return (
-    <div className="p-4 md:p-6 pb-28 md:pb-8 max-w-7xl mx-auto text-white">
+    <div style={{ padding: 'min(5vw, 24px) min(5vw, 24px) 100px min(5vw, 24px)', maxWidth: '1200px', margin: '0 auto', color: '#fff' }}>
       
       {/* 1. Header Area */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
           <p style={{ fontSize: '13px', color: '#8e8e9e', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
             {greeting}
@@ -90,8 +90,8 @@ export function DashboardPage() {
         </button>
       </div>
 
-      {/* 2. Key Stats (4 columns on desktop, 2 on mobile) */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 md:gap-6 mb-10">
+      {/* 2. Key Stats */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '16px', marginBottom: '40px' }}>
         <StatItem icon={<Users size={16}/>} label="Total Doctors" value={data?.stats.totalDoctors || 0} color="#f59e0b" onClick={() => navigate('/doctors')} />
         <StatItem icon={<CalendarCheck size={16}/>} label="Visited Today" value={data?.stats.todaysVisits || 0} color="#34d399" />
         <StatItem icon={<Star size={16}/>} label="Preferred" value={data?.stats.preferredToday || 0} color="#f97316" onClick={() => navigate('/doctors')} />
@@ -100,15 +100,15 @@ export function DashboardPage() {
       </div>
 
       {/* 3. Main Content Split */}
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '32px' }}>
         
         {/* Left Column: Today's Plan */}
-        <div className="flex-1 flex flex-col gap-6">
+        <div style={{ flex: '1 1 320px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
           {/* Plan Hero Card */}
-          <div onClick={() => navigate('/plan')} className="relative p-6 md:p-8 rounded-3xl cursor-pointer overflow-hidden shadow-2xl" style={{
-            background: 'linear-gradient(135deg, #1e1e24 0%, #121216 100%)',
-            border: '1px solid rgba(52,211,153,0.1)'
+          <div onClick={() => navigate('/plan')} style={{
+            position: 'relative', padding: 'min(6vw, 28px)', borderRadius: '24px', cursor: 'pointer', overflow: 'hidden', boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+            background: 'linear-gradient(135deg, #1e1e24 0%, #121216 100%)', border: '1px solid rgba(52,211,153,0.1)'
           }}>
             <div style={{ position: 'absolute', top: 0, right: 0, width: '200px', height: '200px', background: 'rgba(245,158,11,0.05)', borderRadius: '50%', filter: 'blur(50px)', transform: 'translate(30%, -30%)', pointerEvents: 'none' }} />
             
@@ -164,7 +164,7 @@ export function DashboardPage() {
         </div>
 
         {/* Right Column: Lists */}
-        <div className="w-full lg:w-[400px] flex flex-col gap-8">
+        <div style={{ flex: '1 1 320px', display: 'flex', flexDirection: 'column', gap: '32px' }}>
           
           {/* Available Now */}
           {availableNow.length > 0 && (
