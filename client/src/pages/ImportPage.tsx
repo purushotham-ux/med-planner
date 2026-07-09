@@ -7,7 +7,6 @@ import { toast } from '../stores/toastStore';
 
 export function ImportPage() {
   const navigate = useNavigate();
-  const [file, setFile] = useState<File | null>(null);
   const [parsedData, setParsedData] = useState<any[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +20,6 @@ export function ImportPage() {
       return;
     }
 
-    setFile(selectedFile);
     setError(null);
 
     const reader = new FileReader();
