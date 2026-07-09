@@ -71,108 +71,115 @@ export function ImportPage() {
     setParsedData(prev => prev.filter((_, i) => i !== index));
   };
 
-  return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', backgroundColor: '#0a0a0f', color: '#fff' }}>
+      
+      {/* Header */}
+      <div style={{ position: 'sticky', top: 0, zIndex: 50, backgroundColor: 'rgba(10,10,15,0.95)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ padding: 'min(5vw, 24px)', maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button
             onClick={() => navigate('/doctors')}
-            className="p-2 -ml-2 text-navy-400 hover:text-white hover:bg-navy-800 rounded-xl transition-colors"
+            style={{ background: 'transparent', border: 'none', color: '#8e8e9e', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '8px' }}
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={24} />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-white">Import Doctors</h1>
-            <p className="text-navy-300 text-sm mt-1">Upload an Excel or CSV file to add multiple doctors</p>
+            <h1 style={{ fontSize: '24px', fontWeight: 700, margin: '0 0 4px 0' }}>Import Doctors</h1>
+            <p style={{ fontSize: '13px', color: '#8e8e9e', margin: 0, fontWeight: 500 }}>Upload an Excel or CSV file to add multiple doctors</p>
           </div>
         </div>
       </div>
 
-      {!parsedData.length ? (
-        <div className="bg-navy-900 border border-navy-800 rounded-2xl p-12 flex flex-col items-center justify-center text-center">
-          <div className="w-20 h-20 bg-teal-500/10 rounded-full flex items-center justify-center mb-6">
-            <UploadCloud size={40} className="text-teal-500" />
-          </div>
-          <h3 className="text-xl font-bold text-white mb-2">Upload your file</h3>
-          <p className="text-navy-300 max-w-md mb-8">
-            Your file should have columns for Name, Area, Beat, Speciality, and Grade. We will automatically map matching columns.
-          </p>
+      <div style={{ padding: 'min(5vw, 24px)', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+        {!parsedData.length ? (
+          <div style={{ backgroundColor: '#141418', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '24px', padding: '60px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+            <div style={{ width: '80px', height: '80px', backgroundColor: 'rgba(20, 184, 166, 0.1)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '24px' }}>
+              <UploadCloud size={40} color="#14b8a6" />
+            </div>
+            <h3 style={{ fontSize: '20px', fontWeight: 700, margin: '0 0 8px 0' }}>Upload your file</h3>
+            <p style={{ color: '#8e8e9e', maxWidth: '400px', margin: '0 0 32px 0', lineHeight: 1.5 }}>
+              Your file should have columns for Name, Area, Beat, Speciality, and Grade. We will automatically map matching columns.
+            </p>
 
-          <input
-            type="file"
-            accept=".xlsx, .xls, .csv"
-            onChange={handleFileUpload}
-            className="hidden"
-            id="file-upload"
-          />
           <label
             htmlFor="file-upload"
-            className="bg-teal-500 hover:bg-teal-600 text-white px-8 py-3 rounded-xl font-medium transition-colors cursor-pointer inline-flex items-center gap-2 shadow-lg shadow-teal-500/20"
+            style={{
+              backgroundColor: '#14b8a6', color: '#fff', padding: '12px 32px', borderRadius: '12px',
+              fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
+              boxShadow: '0 4px 12px rgba(20, 184, 166, 0.2)', transition: 'all 0.2s'
+            }}
           >
             <FileText size={20} />
             Select Excel or CSV File
           </label>
+          <input
+            type="file"
+            accept=".xlsx, .xls, .csv"
+            onChange={handleFileUpload}
+            style={{ display: 'none' }}
+            id="file-upload"
+          />
 
           {error && (
-            <div className="mt-6 flex items-center gap-2 text-red-400 bg-red-400/10 px-4 py-3 rounded-xl border border-red-400/20">
+            <div style={{ marginTop: '24px', display: 'flex', alignItems: 'center', gap: '8px', color: '#f87171', backgroundColor: 'rgba(248, 113, 113, 0.1)', padding: '12px 16px', borderRadius: '12px', border: '1px solid rgba(248, 113, 113, 0.2)' }}>
               <AlertCircle size={18} />
-              <span>{error}</span>
+              <span style={{ fontSize: '14px', fontWeight: 500 }}>{error}</span>
             </div>
           )}
         </div>
       ) : (
-        <div className="space-y-6">
-          <div className="bg-navy-900 border border-navy-800 rounded-2xl overflow-hidden">
-            <div className="p-6 border-b border-navy-800 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-teal-500/10 rounded-lg flex items-center justify-center text-teal-500">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ backgroundColor: '#141418', border: '1px solid rgba(255,255,255,0.05)', borderRadius: '24px', overflow: 'hidden' }}>
+            
+            <div style={{ padding: '20px', borderBottom: '1px solid rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <div style={{ width: '40px', height: '40px', backgroundColor: 'rgba(20, 184, 166, 0.1)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#14b8a6' }}>
                   <CheckCircle2 size={24} />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">Preview Data</h3>
-                  <p className="text-navy-300 text-sm">Found {parsedData.length} valid doctor records</p>
+                  <h3 style={{ fontSize: '18px', fontWeight: 700, margin: '0 0 2px 0' }}>Preview Data</h3>
+                  <p style={{ fontSize: '13px', color: '#8e8e9e', margin: 0 }}>Found {parsedData.length} valid doctor records</p>
                 </div>
               </div>
               <button
                 onClick={() => setParsedData([])}
-                className="text-navy-400 hover:text-white px-4 py-2 rounded-lg hover:bg-navy-800 transition-colors"
+                style={{ background: 'transparent', border: '1px solid rgba(255,255,255,0.1)', color: '#fff', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 600 }}
               >
                 Cancel
               </button>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse', minWidth: '600px' }}>
                 <thead>
-                  <tr className="bg-navy-950 border-b border-navy-800">
-                    <th className="p-4 text-xs font-semibold text-navy-400 uppercase tracking-wider">Name</th>
-                    <th className="p-4 text-xs font-semibold text-navy-400 uppercase tracking-wider">Area</th>
-                    <th className="p-4 text-xs font-semibold text-navy-400 uppercase tracking-wider">Beat</th>
-                    <th className="p-4 text-xs font-semibold text-navy-400 uppercase tracking-wider">Speciality</th>
-                    <th className="p-4 text-xs font-semibold text-navy-400 uppercase tracking-wider">Grade</th>
-                    <th className="p-4 w-12"></th>
+                  <tr style={{ backgroundColor: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <th style={{ padding: '16px', fontSize: '12px', fontWeight: 600, color: '#8e8e9e', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Name</th>
+                    <th style={{ padding: '16px', fontSize: '12px', fontWeight: 600, color: '#8e8e9e', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Area</th>
+                    <th style={{ padding: '16px', fontSize: '12px', fontWeight: 600, color: '#8e8e9e', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Beat</th>
+                    <th style={{ padding: '16px', fontSize: '12px', fontWeight: 600, color: '#8e8e9e', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Speciality</th>
+                    <th style={{ padding: '16px', fontSize: '12px', fontWeight: 600, color: '#8e8e9e', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Grade</th>
+                    <th style={{ padding: '16px', width: '48px' }}></th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-navy-800">
+                <tbody>
                   {parsedData.map((doc, idx) => (
-                    <tr key={idx} className="hover:bg-navy-800/50 transition-colors">
-                      <td className="p-4 text-white font-medium">{doc.name}</td>
-                      <td className="p-4 text-navy-300">{doc.areaName || '-'}</td>
-                      <td className="p-4 text-navy-300">{doc.beatName || '-'}</td>
-                      <td className="p-4">
-                        <span className="px-2 py-1 bg-navy-800 text-navy-300 rounded-md text-xs">
+                    <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.02)' }}>
+                      <td style={{ padding: '16px', fontWeight: 600 }}>{doc.name}</td>
+                      <td style={{ padding: '16px', color: '#8e8e9e' }}>{doc.areaName || '-'}</td>
+                      <td style={{ padding: '16px', color: '#8e8e9e' }}>{doc.beatName || '-'}</td>
+                      <td style={{ padding: '16px' }}>
+                        <span style={{ padding: '4px 8px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '6px', fontSize: '12px', fontWeight: 500, color: '#aaa' }}>
                           {doc.speciality}
                         </span>
                       </td>
-                      <td className="p-4">
-                        <span className="w-6 h-6 flex items-center justify-center bg-teal-500/10 text-teal-500 rounded-md font-bold text-sm">
+                      <td style={{ padding: '16px' }}>
+                        <span style={{ width: '24px', height: '24px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(20, 184, 166, 0.1)', color: '#14b8a6', borderRadius: '6px', fontWeight: 700, fontSize: '13px' }}>
                           {doc.grade}
                         </span>
                       </td>
-                      <td className="p-4 text-right">
+                      <td style={{ padding: '16px', textAlign: 'right' }}>
                         <button
                           onClick={() => removeRow(idx)}
-                          className="text-navy-400 hover:text-red-400 transition-colors"
+                          style={{ background: 'transparent', border: 'none', color: '#f87171', cursor: 'pointer', padding: '4px' }}
                         >
                           <X size={18} />
                         </button>
@@ -184,27 +191,23 @@ export function ImportPage() {
             </div>
           </div>
 
-          <div className="flex justify-end gap-4">
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <button
               onClick={handleImport}
               disabled={isProcessing || !parsedData.length}
-              className="bg-teal-500 hover:bg-teal-600 disabled:opacity-50 disabled:cursor-not-allowed text-white px-8 py-3 rounded-xl font-medium transition-colors inline-flex items-center gap-2 shadow-lg shadow-teal-500/20"
+              style={{
+                backgroundColor: '#14b8a6', color: '#fff', padding: '14px 32px', borderRadius: '12px',
+                fontWeight: 600, fontSize: '15px', display: 'flex', alignItems: 'center', gap: '8px', cursor: isProcessing ? 'not-allowed' : 'pointer',
+                opacity: isProcessing ? 0.7 : 1, border: 'none', boxShadow: '0 4px 12px rgba(20, 184, 166, 0.2)'
+              }}
             >
-              {isProcessing ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
-                  Importing...
-                </>
-              ) : (
-                <>
-                  Confirm Import
-                  <ArrowRight size={20} />
-                </>
-              )}
+              {isProcessing ? 'Importing...' : 'Confirm Import'}
+              {!isProcessing && <ArrowRight size={20} />}
             </button>
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
