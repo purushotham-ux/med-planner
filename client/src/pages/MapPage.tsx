@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup, Circle, useMap, Polyline } from
 import L from 'leaflet';
 import api from '../lib/api';
 import type { Doctor, Plan, ApiResponse } from '../types';
-import { SPECIALITY_LABELS, GRADE_COLORS } from '../types';
+import { getSpecialityLabel, GRADE_COLORS } from '../types';
 import {
   Locate, Navigation2, ChevronUp, ChevronDown,
   Building2, Phone, Star, Filter, ExternalLink
@@ -153,7 +153,7 @@ export function MapPage() {
                     <span className="font-bold text-sm">{doc.name}</span>
                     {doc.favorite && <Star size={12} className="text-amber-400" fill="currentColor" />}
                   </div>
-                  <p className="text-xs opacity-80 mb-1">{SPECIALITY_LABELS[doc.speciality]} • Grade {doc.grade}</p>
+                  <p className="text-xs opacity-80 mb-1">{getSpecialityLabel(doc.speciality)} • Grade {doc.grade}</p>
                   {doc.hospital && (
                     <p className="text-xs opacity-60 flex items-center gap-1 mb-1"><Building2 size={10} /> {doc.hospital}</p>
                   )}
@@ -295,7 +295,7 @@ export function MapPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-white font-medium truncate">{doc.name}</p>
-                    <p className="text-[10px] text-navy-400 truncate">{SPECIALITY_LABELS[doc.speciality]}</p>
+                    <p className="text-[10px] text-navy-400 truncate">{getSpecialityLabel(doc.speciality)}</p>
                   </div>
                   <div className="text-right shrink-0">
                     <p className="text-xs font-semibold text-teal-400">

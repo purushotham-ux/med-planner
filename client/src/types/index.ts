@@ -2,27 +2,10 @@
 // Shared TypeScript types for the MedRep app
 // ============================================
 
-export type Speciality =
-  | 'GENERAL_PHYSICIAN'
-  | 'CONSULTING_PHYSICIAN'
-  | 'DIABETOLOGIST'
-  | 'CARDIOLOGIST'
-  | 'NEUROLOGIST'
-  | 'ORTHOPEDIC'
-  | 'PEDIATRICIAN'
-  | 'GYNECOLOGIST'
-  | 'ENT'
-  | 'ENDOCRINOLOGIST'
-  | 'GASTROENTEROLOGIST';
+// Speciality is now a free-form string — any value from the user's Excel is preserved as-is.
+// We keep a known-labels map for display friendliness, but unknown values render directly.
 
-export type Grade = 'A' | 'B' | 'C';
-export type TimeSlot = 'MORNING' | 'AFTERNOON' | 'EVENING';
-export type DoctorStatus = 'ACTIVE' | 'INACTIVE' | 'ARCHIVED';
-export type PlanType = 'DAILY' | 'WEEKLY' | 'MONTHLY';
-export type PlanStatus = 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
-export type PlanItemStatus = 'PENDING' | 'VISITED' | 'SKIPPED' | 'RESCHEDULED';
-
-export const SPECIALITY_LABELS: Record<Speciality, string> = {
+export const SPECIALITY_LABELS: Record<string, string> = {
   GENERAL_PHYSICIAN: 'GP',
   CONSULTING_PHYSICIAN: 'Consultant',
   DIABETOLOGIST: 'Diabetologist',
@@ -36,7 +19,8 @@ export const SPECIALITY_LABELS: Record<Speciality, string> = {
   GASTROENTEROLOGIST: 'Gastro',
 };
 
-export const SPECIALITY_COLORS: Record<Speciality, string> = {
+// Known speciality colors
+const KNOWN_SPECIALITY_COLORS: Record<string, string> = {
   GENERAL_PHYSICIAN: '#3b82f6',
   CONSULTING_PHYSICIAN: '#6366f1',
   DIABETOLOGIST: '#f59e0b',
@@ -50,6 +34,32 @@ export const SPECIALITY_COLORS: Record<Speciality, string> = {
   GASTROENTEROLOGIST: '#f97316',
 };
 
+// Generates a consistent, vibrant HSL color from any string
+function hashColor(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue = ((hash % 360) + 360) % 360;
+  return `hsl(${hue}, 70%, 55%)`;
+}
+
+// Get a display-friendly label for any speciality string
+export function getSpecialityLabel(raw: string): string {
+  if (!raw) return 'GP';
+  // Check known labels first (legacy enum values)
+  if (SPECIALITY_LABELS[raw]) return SPECIALITY_LABELS[raw];
+  // Otherwise return the raw string in Title Case
+  return raw.replace(/[_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+// Get a consistent color for any speciality string
+export function getSpecialityColor(raw: string): string {
+  if (!raw) return '#3b82f6';
+  if (KNOWN_SPECIALITY_COLORS[raw]) return KNOWN_SPECIALITY_COLORS[raw];
+  return hashColor(raw.toUpperCase());
+}
+
 export const GRADE_COLORS: Record<Grade, string> = {
   A: '#ef4444',
   B: '#f59e0b',
@@ -62,6 +72,13 @@ export const GRADE_VISIT_FREQUENCY: Record<Grade, number> = {
   B: 2,
   C: 1,
 };
+
+export type Grade = 'A' | 'B' | 'C';
+export type TimeSlot = 'MORNING' | 'AFTERNOON' | 'EVENING';
+export type DoctorStatus = 'ACTIVE' | 'INACTIVE' | 'ARCHIVED';
+export type PlanType = 'DAILY' | 'WEEKLY' | 'MONTHLY';
+export type PlanStatus = 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'CANCELLED';
+export type PlanItemStatus = 'PENDING' | 'VISITED' | 'SKIPPED' | 'RESCHEDULED';
 
 export const DAYS_OF_WEEK = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
@@ -95,7 +112,7 @@ export interface Beat {
 export interface Doctor {
   id: string;
   name: string;
-  speciality: Speciality;
+  speciality: string;
   grade: Grade;
   hospital?: string;
   clinic?: string;

@@ -14,19 +14,8 @@ datasource db {
 // ENUMS
 // ============================================
 
-enum Speciality {
-  GENERAL_PHYSICIAN
-  CONSULTING_PHYSICIAN
-  DIABETOLOGIST
-  CARDIOLOGIST
-  NEUROLOGIST
-  ORTHOPEDIC
-  PEDIATRICIAN
-  GYNECOLOGIST
-  ENT
-  ENDOCRINOLOGIST
-  GASTROENTEROLOGIST
-}
+// Speciality is now a free-form String on the Doctor model
+// (enum removed to allow exact user data during imports)
 
 enum Grade {
   A
@@ -129,7 +118,7 @@ model Beat {
 model Doctor {
   id            String       @id @default(cuid())
   name          String
-  speciality    Speciality
+  speciality    String       @default("General Physician")
   grade         Grade        @default(B)
   hospital      String?
   clinic        String?

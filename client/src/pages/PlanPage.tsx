@@ -5,7 +5,7 @@ import api from '../lib/api';
 import { toast } from '../stores/toastStore';
 import { VisitRecordModal } from '../components/VisitRecordModal';
 import type { Plan, ApiResponse, Doctor } from '../types';
-import { SPECIALITY_LABELS, GRADE_COLORS, DAYS_OF_WEEK } from '../types';
+import { getSpecialityLabel, GRADE_COLORS, DAYS_OF_WEEK } from '../types';
 import {
   CalendarDays, Sparkles, Check, Clock, MapPin,
   Navigation2, Loader2, SkipForward, Route, ExternalLink
@@ -312,7 +312,7 @@ export function PlanPage() {
                       />
                     </div>
                     <p className="text-[11px] text-navy-400 mt-0.5 truncate">
-                      {item.doctor?.speciality ? SPECIALITY_LABELS[item.doctor.speciality] : ''}
+                      {item.doctor?.speciality ? getSpecialityLabel(item.doctor.speciality) : ''}
                       {item.doctor?.area?.name ? ` • ${item.doctor.area.name}` : ''}
                     </p>
                     {item.doctor?.hospital && (

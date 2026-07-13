@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 import type { DashboardData, ApiResponse, Doctor } from '../types';
-import { SPECIALITY_LABELS, GRADE_COLORS } from '../types';
+import { getSpecialityLabel, GRADE_COLORS } from '../types';
 import { useAuthStore } from '../stores/authStore';
 import {
   Users, CalendarCheck, MapPin, Clock, Star,
@@ -262,7 +262,7 @@ function DoctorListItem({ doctor, prefix, subtitle, action, onClick }: { doctor:
         </div>
         {subtitle || (
           <div style={{ fontSize: '12px', color: '#8e8e9e', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {doctor.speciality ? SPECIALITY_LABELS[doctor.speciality as keyof typeof SPECIALITY_LABELS] : ''} • {doctor.area?.name || 'Unknown'}
+            {doctor.speciality ? getSpecialityLabel(doctor.speciality) : ''} • {doctor.area?.name || 'Unknown'}
           </div>
         )}
       </div>

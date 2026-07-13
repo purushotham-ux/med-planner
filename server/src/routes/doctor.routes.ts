@@ -262,7 +262,7 @@ router.post('/bulk', async (req: AuthRequest, res: Response, next: NextFunction)
           data: {
             userId,
             name: doc.name,
-            speciality: doc.speciality || 'GENERAL_PHYSICIAN',
+            speciality: doc.speciality || 'General Physician',
             grade: doc.grade || 'B',
             hospital: doc.hospital || undefined,
             clinic: doc.clinic || undefined,

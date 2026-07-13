@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 import type { Visit, ApiResponse } from '../types';
-import { SPECIALITY_LABELS, GRADE_COLORS } from '../types';
+import { getSpecialityLabel, GRADE_COLORS } from '../types';
 import {
   Search, Calendar, ChevronLeft, ChevronRight, Package, FileText,
   Hash, Clock, X, StickyNote, Filter
@@ -179,7 +179,7 @@ export function VisitHistoryPage() {
                             {visit.doctor?.name || 'Unknown Doctor'}
                           </h3>
                           <div style={{ fontSize: '12px', color: '#8e8e9e', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: '2px' }}>
-                            {visit.doctor?.speciality ? SPECIALITY_LABELS[visit.doctor.speciality as keyof typeof SPECIALITY_LABELS] : ''}
+                            {visit.doctor?.speciality ? getSpecialityLabel(visit.doctor.speciality) : ''}
                           </div>
                         </div>
                       </div>

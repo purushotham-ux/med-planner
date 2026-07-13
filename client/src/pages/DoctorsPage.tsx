@@ -2,8 +2,8 @@ import { useState, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import api from '../lib/api';
-import type { Doctor, ApiResponse, Speciality } from '../types';
-import { SPECIALITY_LABELS, SPECIALITY_COLORS, GRADE_COLORS, DAYS_OF_WEEK } from '../types';
+import type { Doctor, ApiResponse } from '../types';
+import { getSpecialityLabel, getSpecialityColor, GRADE_COLORS, DAYS_OF_WEEK } from '../types';
 import { VisitRecordModal } from '../components/VisitRecordModal';
 import {
   Search, Plus, Star, MapPin, Phone, Clock, SortAsc,
@@ -206,7 +206,7 @@ export function DoctorsPage() {
                   <label style={{ display: 'block', fontSize: '12px', fontWeight: 600, color: '#8e8e9e', marginBottom: '8px' }}>Speciality</label>
                   <select value={specFilter} onChange={(e) => setSpecFilter(e.target.value)} style={{ width: '100%', padding: '10px 12px', borderRadius: '8px', backgroundColor: '#0a0a0f', color: '#fff', border: '1px solid rgba(255,255,255,0.05)', outline: 'none' }}>
                     <option value="">All Specialities</option>
-                    {specialities.map(s => <option key={s} value={s}>{SPECIALITY_LABELS[s as Speciality]}</option>)}
+                    {specialities.map(s => <option key={s} value={s}>{getSpecialityLabel(s)}</option>)}
                   </select>
                 </div>
               </div>
@@ -240,7 +240,7 @@ export function DoctorsPage() {
                 const timingSlots = getTimingSlots(doc);
                 const vf = doc.visitFrequency || (doc.grade === 'A' ? 3 : doc.grade === 'B' ? 2 : 1);
                 const gradeColor = GRADE_COLORS[doc.grade as keyof typeof GRADE_COLORS] || '#aaa';
-                const specColor = SPECIALITY_COLORS[doc.speciality as keyof typeof SPECIALITY_COLORS] || '#aaa';
+                const specColor = getSpecialityColor(doc.speciality);
 
                 return (
                   <div key={doc.id} onClick={() => navigate(`/doctors/${doc.id}`)} style={{
@@ -266,7 +266,7 @@ export function DoctorsPage() {
                           {doc.favorite && <Star size={14} color="#f59e0b" fill="#f59e0b" style={{ flexShrink: 0 }} />}
                         </div>
                         <div style={{ fontSize: '13px', fontWeight: 600, color: specColor, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {SPECIALITY_LABELS[doc.speciality as Speciality]} {doc.notes && <span style={{ color: '#5a5a68', fontWeight: 500 }}> • {doc.notes}</span>}
+                          {getSpecialityLabel(doc.speciality)} {doc.notes && <span style={{ color: '#5a5a68', fontWeight: 500 }}> • {doc.notes}</span>}
                         </div>
                       </div>
                       

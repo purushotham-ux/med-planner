@@ -4,14 +4,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import api from '../lib/api';
 import { toast } from '../stores/toastStore';
-import type { Doctor, Area, Beat, Chemist, ApiResponse, Speciality, Grade, TimeSlot } from '../types';
+import type { Doctor, Area, Beat, Chemist, ApiResponse, Grade, TimeSlot } from '../types';
 import { SPECIALITY_LABELS, DAYS_OF_WEEK } from '../types';
 import { ArrowLeft, Save, Loader2, MapPin, Plus } from 'lucide-react';
 import { ChemistFormModal } from '../components/ChemistFormModal';
 
 interface DoctorFormData {
   name: string;
-  speciality: Speciality;
+  speciality: string;
   grade: Grade;
   hospital?: string;
   clinic?: string;
@@ -228,11 +228,12 @@ export function DoctorFormPage() {
               </FormField>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '16px' }}>
                 <FormField label="Speciality *">
-                  <select {...register('speciality')} style={inputStyle}>
+                  <input {...register('speciality', { required: 'Speciality is required' })} style={inputStyle} placeholder="e.g. Cardiologist, ENT Surgeon, GP" list="speciality-suggestions" />
+                  <datalist id="speciality-suggestions">
                     {Object.entries(SPECIALITY_LABELS).map(([key, label]) => (
-                      <option key={key} value={key}>{label}</option>
+                      <option key={key} value={label} />
                     ))}
-                  </select>
+                  </datalist>
                 </FormField>
                 <FormField label="Grade *">
                   <select {...register('grade')} style={inputStyle}>

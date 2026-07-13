@@ -4,7 +4,7 @@ import { Modal } from './ui/Modal';
 import { toast } from '../stores/toastStore';
 import api from '../lib/api';
 import type { Doctor, Brand, ApiResponse } from '../types';
-import { SPECIALITY_LABELS, GRADE_COLORS } from '../types';
+import { getSpecialityLabel, GRADE_COLORS } from '../types';
 import {
   Check, SkipForward, Clock, Package,
   CalendarPlus, Loader2, FileText, Pill, Search, X, StickyNote
@@ -171,7 +171,7 @@ export function VisitRecordModal({
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <p style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: 700, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{doctor.name}</p>
-            <p style={{ margin: 0, fontSize: '13px', color: '#8e8e9e' }}>{SPECIALITY_LABELS[doctor.speciality as keyof typeof SPECIALITY_LABELS]}</p>
+            <p style={{ margin: 0, fontSize: '13px', color: '#8e8e9e' }}>{getSpecialityLabel(doctor.speciality)}</p>
           </div>
           <div style={{ padding: '4px 12px', borderRadius: '8px', backgroundColor: `${gradeColor}15`, color: gradeColor, fontSize: '12px', fontWeight: 800, flexShrink: 0 }}>
             {doctor.visitFrequency || 2}V/mo

@@ -6,7 +6,7 @@ import { toast } from '../stores/toastStore';
 import { VisitRecordModal } from '../components/VisitRecordModal';
 import { ConfirmDialog } from '../components/ui/ConfirmDialog';
 import type { Doctor, Visit, ApiResponse } from '../types';
-import { SPECIALITY_LABELS, SPECIALITY_COLORS, GRADE_COLORS, DAYS_OF_WEEK } from '../types';
+import { getSpecialityLabel, getSpecialityColor, GRADE_COLORS, DAYS_OF_WEEK } from '../types';
 import {
   ArrowLeft, Heart, Phone, MapPin, Building2, Clock,
   Star, Navigation2, Calendar, Edit, Trash2, Check,
@@ -166,8 +166,8 @@ export function DoctorDetailPage() {
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <h1 style={{ fontSize: '24px', fontWeight: 700, color: '#fff', margin: '0 0 6px 0', lineHeight: 1.2 }}>{doctor.name}</h1>
-                  <div style={{ fontSize: '14px', fontWeight: 600, color: SPECIALITY_COLORS[doctor.speciality as keyof typeof SPECIALITY_COLORS] || '#aaa', marginBottom: '12px' }}>
-                    {SPECIALITY_LABELS[doctor.speciality as keyof typeof SPECIALITY_LABELS]}
+                  <div style={{ fontSize: '14px', fontWeight: 600, color: getSpecialityColor(doctor.speciality), marginBottom: '12px' }}>
+                    {getSpecialityLabel(doctor.speciality)}
                     {doctor.notes && !editingNotes && <span style={{ color: '#8e8e9e', fontWeight: 500 }}> • {doctor.notes}</span>}
                   </div>
                   

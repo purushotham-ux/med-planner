@@ -5,56 +5,7 @@ import { UploadCloud, CheckCircle2, AlertCircle, FileText, ArrowLeft, ArrowRight
 import api from '../lib/api';
 import { toast } from '../stores/toastStore';
 
-// Normalize free-text speciality to our database enum values
-const normalizeSpeciality = (raw: string): string => {
-  if (!raw) return 'GENERAL_PHYSICIAN';
-  const s = raw.trim().toUpperCase();
-
-  // Direct matches & Includes
-  if (s.includes('CARDIO')) return 'CARDIOLOGIST';
-  if (s.includes('NEURO')) return 'NEUROLOGIST';
-  if (s.includes('ORTHO')) return 'ORTHOPEDIC';
-  if (s.includes('PEDIATRIC') || s.includes('PAEDIATRIC')) return 'PEDIATRICIAN';
-  if (s.includes('ENDOCRIN')) return 'ENDOCRINOLOGIST';
-  if (s.includes('GASTRO')) return 'GASTROENTEROLOGIST';
-
-  // ENT variations
-  if (s === 'ENT' || s.includes('ENT SURGEON') || s.includes('ENT ') || s.includes('.DLO') || s.includes('MS(ENT)')) return 'ENT';
-
-  // Gynecology variations
-  if (s.includes('GYN') || s.includes('OBG') || s.includes('OBST')) return 'GYNECOLOGIST';
-
-  // Diabetology variations
-  if (s.includes('DIABET')) return 'DIABETOLOGIST';
-
-  // Gastro surgeon
-  if (s.includes('GASTRO')) return 'GASTROENTEROLOGIST';
-
-  // Consulting/Consultant Physician
-  if (s.includes('CONSULTANT') || s.includes('CONSULTING') || s === 'PHYSICIAN') return 'CONSULTING_PHYSICIAN';
-
-  // General Physician / GP variations
-  if (s === 'GP' || s === 'MBBS GP' || s === 'NON MBBS GP' || s === 'GENERAL' || s.startsWith('GP-')) return 'GENERAL_PHYSICIAN';
-  if (s.includes('GENERAL PHYSICIAN') || s.includes('GENERAL PRACTITIONER')) return 'GENERAL_PHYSICIAN';
-
-  // Surgeon → GENERAL_PHYSICIAN (closest available)
-  if (s.includes('SURGEON') || s.includes('SURGERY')) return 'GENERAL_PHYSICIAN';
-
-  // Chest / Pulmonology
-  if (s.includes('CHEST') || s.includes('PULMON')) return 'CONSULTING_PHYSICIAN';
-
-  // Neuro surgeon
-  if (s.includes('NEURO')) return 'NEUROLOGIST';
-
-  // Urologist
-  if (s.includes('UROLOG')) return 'CONSULTING_PHYSICIAN';
-
-  // Oncologist
-  if (s.includes('ONCOL')) return 'CONSULTING_PHYSICIAN';
-
-  // Fallback
-  return 'GENERAL_PHYSICIAN';
-};
+// Speciality is now stored as-is from the Excel file (free-form string)
 
 // Normalize grade to our enum: A, B, C
 const normalizeGrade = (raw: string): string => {
@@ -84,20 +35,6 @@ const getField = (row: any, ...keys: string[]): string => {
     }
   }
   return '';
-};
-
-const SPECIALITY_LABELS: Record<string, string> = {
-  GENERAL_PHYSICIAN: 'GP',
-  CONSULTING_PHYSICIAN: 'Physician',
-  DIABETOLOGIST: 'Diabetologist',
-  CARDIOLOGIST: 'Cardiologist',
-  NEUROLOGIST: 'Neurologist',
-  ORTHOPEDIC: 'Ortho',
-  PEDIATRICIAN: 'Pediatrician',
-  GYNECOLOGIST: 'Gynecologist',
-  ENT: 'ENT',
-  ENDOCRINOLOGIST: 'Endocrinologist',
-  GASTROENTEROLOGIST: 'Gastro',
 };
 
 export function ImportPage() {
@@ -142,8 +79,7 @@ export function ImportPage() {
 
           return {
             name,
-            speciality: normalizeSpeciality(rawSpeciality),
-            originalSpeciality: rawSpeciality, // Keep original for display
+            speciality: rawSpeciality || 'General Physician', // Keep as-is from Excel
             grade: normalizeGrade(rawGrade),
             originalGrade: rawGrade, // Keep original for display
             hospital: getField(row, 'Hospital', 'HOSPITAL', 'hospital'),
@@ -196,7 +132,7 @@ export function ImportPage() {
     setIsProcessing(true);
     try {
       // Strip display-only fields before sending to API
-      const payload = parsedData.map(({ originalSpeciality, originalGrade, ...doc }) => doc);
+      const payload = parsedData.map(({ originalGrade, ...doc }) => doc);
       const response = await api.post('/doctors/bulk', { doctors: payload });
       console.log('[ImportPage] Import response:', response.data);
       toast.success(`Successfully imported ${parsedData.length} doctors!`);
@@ -325,11 +261,8 @@ export function ImportPage() {
                         </td>
                         <td style={tdStyle}>
                           <span style={{ padding: '3px 8px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '6px', fontSize: '12px', fontWeight: 500, color: '#aaa' }}>
-                            {SPECIALITY_LABELS[doc.speciality] || doc.speciality}
+                            {doc.speciality}
                           </span>
-                          {doc.originalSpeciality && doc.originalSpeciality.toUpperCase() !== doc.speciality && (
-                            <span style={{ display: 'block', fontSize: '10px', color: '#555', marginTop: '2px' }}>← {doc.originalSpeciality}</span>
-                          )}
                         </td>
                         <td style={{ ...tdStyle, color: '#8e8e9e' }}>{doc.areaName || '-'}</td>
                         <td style={tdStyle}>
