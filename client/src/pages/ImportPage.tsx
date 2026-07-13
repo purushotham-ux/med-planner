@@ -10,13 +10,13 @@ const normalizeSpeciality = (raw: string): string => {
   if (!raw) return 'GENERAL_PHYSICIAN';
   const s = raw.trim().toUpperCase();
 
-  // Direct matches
-  if (s === 'CARDIOLOGIST') return 'CARDIOLOGIST';
-  if (s === 'NEUROLOGIST') return 'NEUROLOGIST';
-  if (s === 'ORTHOPEDIC' || s === 'ORTHOPAEDIC' || s === 'ORTHO') return 'ORTHOPEDIC';
-  if (s === 'PEDIATRICIAN' || s === 'PAEDIATRICIAN') return 'PEDIATRICIAN';
-  if (s === 'ENDOCRINOLOGIST') return 'ENDOCRINOLOGIST';
-  if (s === 'GASTROENTEROLOGIST' || s === 'GASTRO') return 'GASTROENTEROLOGIST';
+  // Direct matches & Includes
+  if (s.includes('CARDIO')) return 'CARDIOLOGIST';
+  if (s.includes('NEURO')) return 'NEUROLOGIST';
+  if (s.includes('ORTHO')) return 'ORTHOPEDIC';
+  if (s.includes('PEDIATRIC') || s.includes('PAEDIATRIC')) return 'PEDIATRICIAN';
+  if (s.includes('ENDOCRIN')) return 'ENDOCRINOLOGIST';
+  if (s.includes('GASTRO')) return 'GASTROENTEROLOGIST';
 
   // ENT variations
   if (s === 'ENT' || s.includes('ENT SURGEON') || s.includes('ENT ') || s.includes('.DLO') || s.includes('MS(ENT)')) return 'ENT';
@@ -76,7 +76,9 @@ const getField = (row: any, ...keys: string[]): string => {
   // Try case-insensitive + stripped match
   const rowKeys = Object.keys(row);
   for (const key of keys) {
-    const found = rowKeys.find(k => k.toLowerCase().replace(/[_\s./]/g, '') === key.toLowerCase().replace(/[_\s./]/g, ''));
+    // Strip all non-alphanumeric characters for super-robust matching
+    const cleanKey = key.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const found = rowKeys.find(k => k.toLowerCase().replace(/[^a-z0-9]/g, '') === cleanKey);
     if (found && row[found] !== undefined && row[found] !== null && String(row[found]).trim() !== '') {
       return String(row[found]).trim();
     }

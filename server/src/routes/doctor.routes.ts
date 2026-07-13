@@ -235,6 +235,7 @@ router.post('/bulk', async (req: AuthRequest, res: Response, next: NextFunction)
 
     // We process sequentially to correctly lookup/create shared areas & beats
     for (const doc of doctorsData) {
+      console.log('Bulk processing doc:', doc.name, 'Spec:', doc.speciality, 'AreaName:', doc.areaName);
       try {
         let areaId = doc.areaId;
         let beatId = doc.beatId;
