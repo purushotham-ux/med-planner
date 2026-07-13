@@ -27,6 +27,14 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        // Force the new SW to take over immediately
+        skipWaiting: true,
+        clientsClaim: true,
+        // Remove outdated cached assets on SW activation
+        cleanupOutdatedCaches: true,
+        // SPA: serve index.html for all navigation requests
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [/^\/api\//],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
