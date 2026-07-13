@@ -12,6 +12,66 @@ export function ImportPage() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Normalize free-text speciality to our database enum values
+  const normalizeSpeciality = (raw: string): string => {
+    if (!raw) return 'GENERAL_PHYSICIAN';
+    const s = raw.trim().toUpperCase();
+
+    // Direct matches
+    if (s === 'CARDIOLOGIST') return 'CARDIOLOGIST';
+    if (s === 'NEUROLOGIST') return 'NEUROLOGIST';
+    if (s === 'ORTHOPEDIC' || s === 'ORTHOPAEDIC' || s === 'ORTHO') return 'ORTHOPEDIC';
+    if (s === 'PEDIATRICIAN' || s === 'PAEDIATRICIAN') return 'PEDIATRICIAN';
+    if (s === 'ENDOCRINOLOGIST') return 'ENDOCRINOLOGIST';
+    if (s === 'GASTROENTEROLOGIST' || s === 'GASTRO') return 'GASTROENTEROLOGIST';
+
+    // ENT variations
+    if (s.includes('ENT')) return 'ENT';
+
+    // Gynecology variations (Indian English often uses 'GYNAECOLOGIST')
+    if (s.includes('GYN') || s.includes('OBST')) return 'GYNECOLOGIST';
+
+    // Diabetology variations
+    if (s.includes('DIABET')) return 'DIABETOLOGIST';
+
+    // Consulting/Consultant Physician
+    if (s.includes('CONSULTANT') || s.includes('CONSULTING') || s === 'PHYSICIAN') return 'CONSULTING_PHYSICIAN';
+
+    // General Physician / GP variations
+    if (s === 'GP' || s === 'MBBS GP' || s === 'NON MBBS GP' || s === 'GENERAL' || s.includes('GENERAL PHYSICIAN') || s.includes('GENERAL PRACTITIONER')) return 'GENERAL_PHYSICIAN';
+
+    // Surgeon → map to GENERAL_PHYSICIAN (closest available)
+    if (s.includes('SURGEON') || s.includes('SURGERY')) return 'GENERAL_PHYSICIAN';
+
+    // Chest Physician → map to CONSULTING_PHYSICIAN
+    if (s.includes('CHEST') || s.includes('PULMON')) return 'CONSULTING_PHYSICIAN';
+
+    // Oncologist → map to CONSULTING_PHYSICIAN
+    if (s.includes('ONCOL')) return 'CONSULTING_PHYSICIAN';
+
+    // Fallback
+    return 'GENERAL_PHYSICIAN';
+  };
+
+  // Find a value from a row by trying multiple possible column names
+  const getField = (row: any, ...keys: string[]): string => {
+    for (const key of keys) {
+      // Try exact match first
+      if (row[key] !== undefined && row[key] !== null && String(row[key]).trim() !== '') {
+        return String(row[key]).trim();
+      }
+    }
+    // Try case-insensitive match
+    const rowKeys = Object.keys(row);
+    for (const key of keys) {
+      const found = rowKeys.find(k => k.toLowerCase().replace(/[_\s]/g, '') === key.toLowerCase().replace(/[_\s]/g, ''));
+      if (found && row[found] !== undefined && row[found] !== null && String(row[found]).trim() !== '') {
+        return String(row[found]).trim();
+      }
+    }
+    return '';
+  };
+
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log('[ImportPage] handleFileUpload triggered');
     const selectedFile = e.target.files?.[0];
@@ -44,28 +104,42 @@ export function ImportPage() {
           console.log('[ImportPage] First row data:', data[0]);
         }
         
-        // Basic mapping logic
-        const mappedData = data.map((row: any) => ({
-          name: row['Name'] || row['Doctor Name'] || row['name'] || row['DOCTOR NAME'] || row['Doctor name'] || row['doctor name'] || '',
-          speciality: row['Speciality'] || row['speciality'] || row['SPECIALITY'] || row['Specialty'] || 'GENERAL_PHYSICIAN',
-          grade: row['Grade'] || row['grade'] || row['GRADE'] || 'B',
-          hospital: row['Hospital'] || row['hospital'] || row['HOSPITAL'] || '',
-          clinic: row['Clinic'] || row['clinic'] || row['CLINIC'] || '',
-          areaName: row['Area'] || row['area'] || row['AREA'] || row['Area Name'] || '',
-          beatName: row['Beat'] || row['beat'] || row['BEAT'] || row['Beat Name'] || '',
-          address: row['Address'] || row['address'] || row['ADDRESS'] || '',
-          phone: row['Phone'] || row['phone'] || row['PHONE'] || row['Mobile'] || row['mobile'] || row['Contact'] || '',
-        })).filter((doc: any) => doc.name); // Filter out empty rows
+        // Smart mapping logic — tries many column name variations
+        const mappedData = data.map((row: any) => {
+          const name = getField(row, 'Name', 'Doctor Name', 'DOCTOR NAME', 'DoctorName', 'name', 'doctor name', 'Doctor name');
+          if (!name) return null;
 
-        console.log('[ImportPage] Mapped doctors:', mappedData.length);
-        if (mappedData.length > 0) {
-          console.log('[ImportPage] First mapped doctor:', mappedData[0]);
+          return {
+            name,
+            speciality: normalizeSpeciality(getField(row, 'Speciality', 'SPECIALITY', 'Specialty', 'speciality', 'Spec')),
+            grade: getField(row, 'Grade', 'GRADE', 'grade') || 'B',
+            hospital: getField(row, 'Hospital', 'HOSPITAL', 'hospital'),
+            clinic: getField(row, 'Clinic', 'CLINIC', 'clinic'),
+            areaName: getField(row, 'Area', 'AREA', 'area', 'AREANAME', 'AreaName', 'Area Name', 'areaname', 'Area name'),
+            beatName: getField(row, 'Beat', 'BEAT', 'beat', 'BeatName', 'Beat Name', 'beatname'),
+            address: getField(row, 'Address', 'ADDRESS', 'address'),
+            phone: getField(row, 'Phone', 'PHONE', 'phone', 'Mobile', 'MOBILE', 'mobile', 'Contact', 'CONTACT'),
+          };
+        }).filter(Boolean) as any[];
+
+        // Deduplicate by name (user's data had the list pasted twice)
+        const seen = new Set<string>();
+        const uniqueData = mappedData.filter(doc => {
+          const key = doc.name.toLowerCase();
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        });
+
+        console.log('[ImportPage] Mapped doctors:', uniqueData.length, '(before dedup:', mappedData.length, ')');
+        if (uniqueData.length > 0) {
+          console.log('[ImportPage] First mapped doctor:', uniqueData[0]);
         }
 
-        if (mappedData.length === 0) {
+        if (uniqueData.length === 0) {
           setError('No valid doctor records found. Make sure your file has a column named "Name" or "Doctor Name".');
         } else {
-          setParsedData(mappedData);
+          setParsedData(uniqueData);
         }
       } catch (err: any) {
         console.error('[ImportPage] Parse error:', err);
