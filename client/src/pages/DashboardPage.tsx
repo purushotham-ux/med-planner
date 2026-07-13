@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 import type { DashboardData, ApiResponse, Doctor } from '../types';
 import { SPECIALITY_LABELS, GRADE_COLORS } from '../types';
+import { useAuthStore } from '../stores/authStore';
 import {
   Users, CalendarCheck, MapPin, Clock, Star,
   AlertTriangle, TrendingUp,
@@ -36,6 +37,7 @@ function ProgressRing({ percentage, size = 64, stroke = 6 }: { percentage: numbe
 
 export function DashboardPage() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
 
   const { data, isLoading } = useQuery({
     queryKey: ['dashboard'],
@@ -65,7 +67,8 @@ export function DashboardPage() {
   }
 
   const today = new Date();
-  const greeting = today.getHours() < 12 ? 'Good Morning' : today.getHours() < 17 ? 'Good Afternoon' : 'Good Evening';
+  const timeOfDay = today.getHours() < 12 ? 'Good Morning' : today.getHours() < 17 ? 'Good Afternoon' : 'Good Evening';
+  const greeting = user?.name ? `${timeOfDay}, ${user.name.split(' ')[0]}!` : `${timeOfDay}!`;
   const pct = data?.planProgress?.percentage || 0;
 
   return (
@@ -74,19 +77,20 @@ export function DashboardPage() {
       {/* 1. Header Area */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', flexWrap: 'wrap', gap: '16px' }}>
         <div>
-          <p style={{ fontSize: '13px', color: '#8e8e9e', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px' }}>
+          <h1 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '-0.5px', margin: '0 0 4px 0', background: 'linear-gradient(135deg, #fff 0%, #a1a1aa 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             {greeting}
-          </p>
-          <h1 style={{ fontSize: '28px', fontWeight: 700, letterSpacing: '-0.5px', margin: 0 }}>
-            {today.toLocaleDateString('en-IN', { weekday: 'long', month: 'short', day: 'numeric' })}
           </h1>
+          <p style={{ fontSize: '14px', color: '#8e8e9e', fontWeight: 500, margin: 0 }}>
+            {today.toLocaleDateString('en-IN', { weekday: 'long', month: 'long', day: 'numeric' })}
+          </p>
         </div>
         <button onClick={() => navigate('/plan')} style={{
-          display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '12px',
-          background: 'linear-gradient(135deg, #d97706 0%, #f59e0b 100%)', border: 'none', color: '#fff',
-          fontWeight: 600, fontSize: '14px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(245,158,11,0.2)'
+          display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px', borderRadius: '14px',
+          background: 'linear-gradient(135deg, #14b8a6 0%, #0f766e 100%)', border: 'none', color: '#fff',
+          fontWeight: 600, fontSize: '15px', cursor: 'pointer', boxShadow: '0 4px 16px rgba(20,184,166,0.3)',
+          transition: 'transform 0.2s',
         }}>
-          <Plus size={16} strokeWidth={2.5} /> New Plan
+          <Plus size={18} strokeWidth={2.5} /> Create Plan
         </button>
       </div>
 
