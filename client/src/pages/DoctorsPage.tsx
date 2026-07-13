@@ -18,6 +18,7 @@ export function DoctorsPage() {
   const [gradeFilter, setGradeFilter] = useState<string>('');
   const [areaFilter, setAreaFilter] = useState<string>('');
   const [specFilter, setSpecFilter] = useState<string>('');
+  const [dayFilter, setDayFilter] = useState<number>(-1); // -1 = all, 0=Sun..6=Sat
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>('name');
   const [visitDoctor, setVisitDoctor] = useState<Doctor | null>(null);
@@ -77,6 +78,13 @@ export function DoctorsPage() {
     if (gradeFilter) list = list.filter(d => d.grade === gradeFilter);
     if (areaFilter) list = list.filter(d => d.areaId === areaFilter);
     if (specFilter) list = list.filter(d => d.speciality === specFilter);
+    if (dayFilter >= 0) {
+      list = list.filter(d => {
+        // Doctors with no preferredDays set → available all week
+        if (!d.preferredDays || d.preferredDays.length === 0) return true;
+        return d.preferredDays.includes(dayFilter);
+      });
+    }
     list.sort((a, b) => {
       switch (sortBy) {
         case 'grade': return a.grade.localeCompare(b.grade);
@@ -87,9 +95,9 @@ export function DoctorsPage() {
       }
     });
     return list;
-  }, [doctors, gradeFilter, areaFilter, specFilter, sortBy]);
+  }, [doctors, gradeFilter, areaFilter, specFilter, dayFilter, sortBy]);
 
-  const activeFilterCount = [gradeFilter, areaFilter, specFilter].filter(Boolean).length;
+  const activeFilterCount = [gradeFilter, areaFilter, specFilter].filter(Boolean).length + (dayFilter >= 0 ? 1 : 0);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', backgroundColor: '#0a0a0f' }}>
@@ -175,6 +183,24 @@ export function DoctorsPage() {
                   Grade {g}
                 </button>
               ))}
+
+              {/* Day-of-week filter pills */}
+              {DAYS_OF_WEEK.slice(1).concat(DAYS_OF_WEEK.slice(0, 1)).map((dayName, idx) => {
+                // Remap: Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6, Sun=0
+                const dayNum = idx < 6 ? idx + 1 : 0;
+                const isActive = dayFilter === dayNum;
+                return (
+                  <button key={dayNum} onClick={() => setDayFilter(isActive ? -1 : dayNum)} style={{
+                    padding: '8px 12px', borderRadius: '99px', flexShrink: 0, fontWeight: 600, fontSize: '12px', cursor: 'pointer',
+                    backgroundColor: isActive ? 'rgba(99,102,241,0.15)' : '#141418',
+                    color: isActive ? '#818cf8' : '#8e8e9e',
+                    border: isActive ? '1px solid rgba(99,102,241,0.4)' : '1px solid rgba(255,255,255,0.05)',
+                    transition: 'all 0.2s', minWidth: '42px', textAlign: 'center'
+                  }}>
+                    {dayName}
+                  </button>
+                );
+              })}
 
               <div style={{ position: 'relative', flexShrink: 0 }}>
                 <select value={sortBy} onChange={(e) => setSortBy(e.target.value as SortOption)} style={{
