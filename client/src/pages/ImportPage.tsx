@@ -78,6 +78,7 @@ export function ImportPage() {
     setParsedData(prev => prev.filter((_, i) => i !== index));
   };
 
+  return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', backgroundColor: '#0a0a0f', color: '#fff' }}>
       
       {/* Header */}
