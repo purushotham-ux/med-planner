@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as XLSX from 'xlsx';
 import { UploadCloud, CheckCircle2, AlertCircle, FileText, ArrowLeft, ArrowRight, X } from 'lucide-react';
@@ -7,6 +7,7 @@ import { toast } from '../stores/toastStore';
 
 export function ImportPage() {
   const navigate = useNavigate();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [parsedData, setParsedData] = useState<any[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,8 +49,14 @@ export function ImportPage() {
       } catch (err) {
         setError('Failed to parse file. Please ensure it is a valid Excel format.');
       }
+      // Reset input so the same file can be selected again
+      e.target.value = '';
     };
     reader.readAsBinaryString(selectedFile);
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
   };
 
   const handleImport = async () => {
@@ -100,23 +107,23 @@ export function ImportPage() {
               Your file should have columns for Name, Area, Beat, Speciality, and Grade. We will automatically map matching columns.
             </p>
 
-          <label
-            htmlFor="file-upload"
+          <button
+            onClick={triggerFileInput}
             style={{
-              backgroundColor: '#14b8a6', color: '#fff', padding: '12px 32px', borderRadius: '12px',
+              backgroundColor: '#14b8a6', color: '#fff', padding: '12px 32px', borderRadius: '12px', border: 'none',
               fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '8px', cursor: 'pointer',
-              boxShadow: '0 4px 12px rgba(20, 184, 166, 0.2)', transition: 'all 0.2s'
+              boxShadow: '0 4px 12px rgba(20, 184, 166, 0.2)', transition: 'all 0.2s', fontSize: '15px'
             }}
           >
             <FileText size={20} />
             Select Excel or CSV File
-          </label>
+          </button>
           <input
+            ref={fileInputRef}
             type="file"
             accept=".xlsx, .xls, .csv"
             onChange={handleFileUpload}
             style={{ display: 'none' }}
-            id="file-upload"
           />
 
           {error && (
