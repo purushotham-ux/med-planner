@@ -36,6 +36,7 @@ interface DoctorFormData {
   notes?: string;
   priority: number;
   visitFrequency: number;
+  kyc: boolean;
 }
 
 export function DoctorFormPage() {
@@ -105,6 +106,7 @@ export function DoctorFormPage() {
       priority: doctor.priority || 5,
       visitFrequency: doctor.visitFrequency || 2,
       googleMapsUrl: doctor.googleMapsUrl || '',
+      kyc: doctor.kyc || false,
     } : {
       name: '',
       speciality: 'GENERAL_PHYSICIAN',
@@ -113,6 +115,7 @@ export function DoctorFormPage() {
       exStationDays: [],
       priority: 5,
       visitFrequency: 2,
+      kyc: false,
     },
   });
 
@@ -148,8 +151,10 @@ export function DoctorFormPage() {
         phone: data.phone || undefined,
         notes: data.notes || undefined,
         preferredTime: data.preferredTime || undefined,
-        visitFrequency: parseInt(String(data.visitFrequency)),
+        visitFrequency: data.visitFrequency ? parseInt(String(data.visitFrequency)) : 2,
+        priority: data.priority ? parseInt(String(data.priority)) : 5,
         googleMapsUrl: data.googleMapsUrl || undefined,
+        kyc: data.kyc === true,
       };
 
       if (isEditing) {
@@ -239,6 +244,25 @@ export function DoctorFormPage() {
                 </FormField>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '16px' }}>
+                <FormField label="Visits / Month">
+                  <select {...register('visitFrequency')} style={inputStyle}>
+                    <option value="1">1 Visit</option>
+                    <option value="2">2 Visits</option>
+                    <option value="3">3 Visits</option>
+                    <option value="4">4 Visits</option>
+                  </select>
+                </FormField>
+                <FormField label="Priority (1-10)">
+                  <input {...register('priority')} type="number" min="1" max="10" style={inputStyle} placeholder="5" />
+                </FormField>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginTop: '8px' }}>
+                <input type="checkbox" id="kyc" {...register('kyc')} style={{ width: '20px', height: '20px', cursor: 'pointer', accentColor: '#14b8a6' }} />
+                <label htmlFor="kyc" style={{ fontSize: '15px', color: '#fff', cursor: 'pointer', fontWeight: 500 }}>
+                  KYC Verified Doctor
+                </label>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '16px', marginTop: '16px' }}>
                 <FormField label="Hospital Name">
                   <input {...register('hospital')} style={inputStyle} placeholder="E.g. Apollo Hospital" />
                 </FormField>
