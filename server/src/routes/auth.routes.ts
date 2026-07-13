@@ -29,11 +29,11 @@ router.post('/login', async (req: Request, res: Response, next: NextFunction) =>
     }
 
     const accessToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-      expiresIn: 900, // 15 minutes
+      expiresIn: '7d',
     });
 
     const refreshToken = jwt.sign({ userId: user.id }, process.env.JWT_REFRESH_SECRET!, {
-      expiresIn: 604800, // 7 days
+      expiresIn: '30d',
     });
 
     // Store refresh token
@@ -77,11 +77,11 @@ router.post('/refresh', async (req: Request, res: Response, next: NextFunction) 
     }
 
     const newAccessToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-      expiresIn: 900, // 15 minutes
+      expiresIn: '7d',
     });
 
     const newRefreshToken = jwt.sign({ userId: user.id }, process.env.JWT_REFRESH_SECRET!, {
-      expiresIn: 604800, // 7 days
+      expiresIn: '30d',
     });
 
     await prisma.user.update({
@@ -163,8 +163,8 @@ router.post('/google', async (req: Request, res: Response, next: NextFunction) =
     }
 
     // Generate JWT tokens
-    const accessToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, { expiresIn: 900 });
-    const refreshToken = jwt.sign({ userId: user.id }, process.env.JWT_REFRESH_SECRET!, { expiresIn: 604800 });
+    const accessToken = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, { expiresIn: '7d' });
+    const refreshToken = jwt.sign({ userId: user.id }, process.env.JWT_REFRESH_SECRET!, { expiresIn: '30d' });
 
     await prisma.user.update({
       where: { id: user.id },
