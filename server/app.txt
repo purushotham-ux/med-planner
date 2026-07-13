@@ -1,0 +1,249 @@
+specalilty	Pediatricain
+	
+Doctor Name	area
+Anjan Kumar .V.S	Tirupati
+K Jaya Shankar	Tirupati
+B Venkateswara reddy	Tirupati
+J muni shekar	Tirupati
+K Venkat Raman	Kalahastri
+L Raja Shekar Reddy	Kalahastri
+K Ram Mohan	Tirupati
+A Karthikeyan	Tirupati
+Naga Sai Manoj	Tirupati
+Manohar B	Tirupati
+K C chaithanya Yadav	Kalahastri
+Ravi Kumar	Tirupati
+A S keerthi	Tirupati
+M Lalitha	Kalahastri
+M Pallavi	Kalahastri
+V Niharika	Tirupati
+G Madhu babu	Chandragiri
+	
+	
+specalilty	Cardiologist
+	
+Doctor Name	area
+Vasu deva shetty	Tirupati
+P Chandra Sehkar Reddy	Tirupati
+V M Vikash	Tirupati
+Vivek Chaithanya	Kalahastri
+B Sree Lalitha	Tirupati
+P Sumanth Reddy	Tirupati
+	
+	
+Specalilty	Diabetic
+	
+Doctor Name	area
+B Giri Prasad	Tirupati
+D  Sree Vani	Kalahastri
+C hanumantha Rao	Tirupati
+Rajesh K reddy	Kalahastri
+S Ravi Babu	Kalahastri
+A Sateesh	Kalahastri
+S Savitha	Tirupati
+B krishna chaithanya reddy	Tirupati
+K Chakra Pani	Kalahastri
+Kondeti Madhavi	Tirupati
+P S Naidu	Tirupati
+Kalyan	Tirupati
+chandra Sehkar Reddy	Tirupati
+Premchand Y	Kalahastri
+	
+	
+Specalilty	Neurologist
+	
+Doctor Name	area
+Niranjan Babu	Tirupati
+A Yamini	Tirupati
+M Jaya Prakash	Tirupati
+A S Keerthi	Tirupati
+Raghu Nandini	Tirupati
+Satish Gundla	Tirupati
+Phani Kumar	Tirupati
+Ravi Prakash 	Tirupati
+Ganta Rajasehkar	Tirupati
+C Ravi Sehkar Reddy	Tirupati
+	
+	
+Specalilty	ENT
+	
+Doctor Name	area
+S Sukumar	Tirupati
+B Harinath	Tirupati
+Kiran	kalahastri
+G B Sreenivas	kalahastri
+Purushotham	kalahastri
+K divya Raana	Tirupati
+	
+	
+Specalilty	Endo
+	
+Doctor Name	area
+B P  Verma	Tirupati
+Y Rajesh Reddy	Tirupati
+V Geerthana	Tirupati
+M Bhavana	Tirupati
+M keethana	Tirupati
+Allock Sachin	Tirupati
+B Krunal pravinchandra	Tirupati
+Vankatesh	Tirupati
+B Lihikitha	Tirupati
+Sai krishna chaithanaya P	Tirupati
+	
+	
+Specalilty	Ortho
+	
+Doctor Name	area
+M Maruthi Krishna	Tirupati
+A Indra sai Vamsi	Kalahastri
+G Uma Maheshwara Reddy	Tirupati
+B Hema Kumar Reddy	Tirupati
+Kiran Kumar GP	Tirupati
+P Kalyan Chakravarthy	Tirupati
+M Rajesh	Tirupati
+B Obul Pathy	Tirupati
+Venkat 	Tirupati
+K Venkateshwara Reddy	Tirupati
+Poorna Chandra Rao	Tirupati
+Sunandana Kumar Reddy	Tirupati
+T Manideep	Kalahastri
+Venu Gopal	Tirupati
+P Prashanth Kumar	Tirupati
+Pasupuleti Hari Prasad	Tirupati
+	
+Specalilty	Gynea
+	
+Doctor Name	area
+Partha Saradi Reddy	Tirupati
+UshaSree	Tirupati
+C Manju Yadav	Tirupati
+K Neelima	Tirupati
+C Vidya vathi	Kalahastri
+B Bhargavi Reddy	Tirupati
+B Gayathri	Tirupati
+Manikarnika	Tirupati
+B Haritha	Kalahastri
+K Ramya	Kalahastri
+	
+Specalilty	Surgeon
+	
+Doctor Name	area
+Adepa	Tirupati
+Chakaradhar	Tirupati
+T G  Dinesh Krishna	Tirupati
+Balarama raju S	Tirupati
+P Teja	Tirupati
+Y Prasad Naidu	Kalahastri
+P Hema bindhy	Kalahastri
+K Prasanth	Tirupati
+K Keerthin Mayee	Tirupati
+M.A Hari Babu 	Tirupati
+C Siva Kishore Yadav	Tirupati
+Ranadheer Raju C.S	Tirupati
+S V Prasad	Tirupati
+M.S Sreedhar	Tirupati
+G Praveen Chandra	Kalahastri
+	
+	
+Specalilty	Physician
+	
+Doctor Name	area
+E V Ramana	Tirupati
+Janardhan	Kalahastri
+Mohan	Kalahastri
+Sreenath	Rompacherla
+P Damodaram	Tirupati
+P Sudheer Kumar	Tirupati
+E Kiran Kumar	Kalahastri
+RamaDevi	Tirupati
+Padabhanaba reddy	Tirupati
+A Annesh	Tirupati
+V Gangi Reddy	Tirupati
+Keerthi	Tirupati
+K Sarasvathi	Kalahastri
+K Raghava Reddy	Kalahastri
+Bhathaiha Naidu	Kalahastri
+A Sandhaya Rani	Kalahastri
+	
+	
+Specalilty	Chest Phy
+	
+Doctor Name	area
+S V subbarao	Tirupati
+Murali Babu	Kalahastri
+K Sai Vikas Reddy	Tirupati
+AbhiNaya durka	Tirupati
+S P anusha Reddy	Kalahastri
+G Chandra Sehkar	Kalahastri
+Anupama V 	Tirupati
+K Siva prasad	Tirupati
+	
+	
+Specalilty	GP
+	
+Doctor Name	area
+G Gnamamba	Kalahastri
+O Lakshmi Narayana	RompaCherla
+Chalapathi Raju	Puli Cherla
+T Suresh Reddy	Kalahastri
+E Balaji	Tirupati
+Hari Prasad	Chandra Giri
+Grorge muller	PachikaPalam
+S Prasad Naidu	Kalahastri
+Muni Swamy	Kalahastri
+V Manoj Kumar	Kalahastri
+R Ramana Reddy	Sadhum
+Eswar Reddy	Pakala
+Bramhanandha reddy	PachikaPalam
+ALI Ahmed	Chandra Giri
+K V Surya Narayana	Kalahastri
+D Dharneeshwara Reddy	Tirupati
+Shankar Reddy	Pakala
+Kumar Raja T	PachikaPalam
+V Ramana Reddy	Kalahastri
+Devarajulu	Veduru Kuppam
+Dhana Lakshmi	PachikaPalam
+Jayanth Babu	Tirupati
+Nagoor	Veduru Kuppam
+V Pradeep Reddy	Tirupati
+Ramesh Babu	Tirupati
+Mallikarjuna Reddy	Kaluur
+Siddayih	Chandra Giri
+Srinivasulu K	Mangalam Peta
+Ramurthy Naidu	Pakala
+Bhanu prakash reddy	sadum
+Surendra 	Rangampeta
+P Vijay Srinivas	Pakala
+Joshna C B	Pakala
+	
+	
+Specalilty	Consultant
+	
+Doctor Name	area
+Lokesh Padiri	Kalahastri
+Haneesha M	Tirupati
+Mallem Babu	Tirupati
+K Hema priya	Tirupati
+J Bharath	Kalahastri
+Shankar naren L	Tirupati
+Anupama	Kalahastri
+Spandana 	Tirupati
+Vishnu Anjan Naren reddy	Tirupati
+Karthik Reddy	Tirupati
+	
+	
+Specalilty	Gastero
+	
+Doctor Name	area
+Anwar Basha	Tirupati
+K Mahendra reddy	Tirupati
+G Siva Rama Krishna	Tirupati
+K Venkat Ramana Reddy	Tirupati
+C Satish Chandra Reddy	Tirupati
+	
+	
+Specalilty	Pulmn
+	
+Doctor Name	area
+Murali Babu	Kalahastri
+Vikash Mancheti	Tirupati

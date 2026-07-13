@@ -13,8 +13,13 @@ export function ImportPage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('[ImportPage] handleFileUpload triggered');
     const selectedFile = e.target.files?.[0];
-    if (!selectedFile) return;
+    if (!selectedFile) {
+      console.log('[ImportPage] No file selected');
+      return;
+    }
+    console.log('[ImportPage] File selected:', selectedFile.name, selectedFile.size, 'bytes');
 
     if (!selectedFile.name.endsWith('.xlsx') && !selectedFile.name.endsWith('.xls') && !selectedFile.name.endsWith('.csv')) {
       setError('Please upload a valid Excel (.xlsx, .xls) or CSV file.');
@@ -26,49 +31,74 @@ export function ImportPage() {
     const reader = new FileReader();
     reader.onload = (evt) => {
       try {
+        console.log('[ImportPage] FileReader onload fired');
         const bstr = evt.target?.result;
         const wb = XLSX.read(bstr, { type: 'binary' });
+        console.log('[ImportPage] Workbook sheets:', wb.SheetNames);
         const wsname = wb.SheetNames[0];
         const ws = wb.Sheets[wsname];
         const data = XLSX.utils.sheet_to_json(ws);
+        console.log('[ImportPage] Raw parsed rows:', data.length);
+        if (data.length > 0) {
+          console.log('[ImportPage] First row columns:', Object.keys(data[0] as any));
+          console.log('[ImportPage] First row data:', data[0]);
+        }
         
         // Basic mapping logic
         const mappedData = data.map((row: any) => ({
-          name: row['Name'] || row['Doctor Name'] || row['name'] || '',
-          speciality: row['Speciality'] || row['speciality'] || 'GENERAL_PHYSICIAN',
-          grade: row['Grade'] || row['grade'] || 'B',
-          hospital: row['Hospital'] || row['hospital'] || '',
-          clinic: row['Clinic'] || row['clinic'] || '',
-          areaName: row['Area'] || row['area'] || '',
-          beatName: row['Beat'] || row['beat'] || '',
-          address: row['Address'] || row['address'] || '',
-          phone: row['Phone'] || row['phone'] || '',
-        })).filter(doc => doc.name); // Filter out empty rows
+          name: row['Name'] || row['Doctor Name'] || row['name'] || row['DOCTOR NAME'] || row['Doctor name'] || row['doctor name'] || '',
+          speciality: row['Speciality'] || row['speciality'] || row['SPECIALITY'] || row['Specialty'] || 'GENERAL_PHYSICIAN',
+          grade: row['Grade'] || row['grade'] || row['GRADE'] || 'B',
+          hospital: row['Hospital'] || row['hospital'] || row['HOSPITAL'] || '',
+          clinic: row['Clinic'] || row['clinic'] || row['CLINIC'] || '',
+          areaName: row['Area'] || row['area'] || row['AREA'] || row['Area Name'] || '',
+          beatName: row['Beat'] || row['beat'] || row['BEAT'] || row['Beat Name'] || '',
+          address: row['Address'] || row['address'] || row['ADDRESS'] || '',
+          phone: row['Phone'] || row['phone'] || row['PHONE'] || row['Mobile'] || row['mobile'] || row['Contact'] || '',
+        })).filter((doc: any) => doc.name); // Filter out empty rows
 
-        setParsedData(mappedData);
-      } catch (err) {
-        setError('Failed to parse file. Please ensure it is a valid Excel format.');
+        console.log('[ImportPage] Mapped doctors:', mappedData.length);
+        if (mappedData.length > 0) {
+          console.log('[ImportPage] First mapped doctor:', mappedData[0]);
+        }
+
+        if (mappedData.length === 0) {
+          setError('No valid doctor records found. Make sure your file has a column named "Name" or "Doctor Name".');
+        } else {
+          setParsedData(mappedData);
+        }
+      } catch (err: any) {
+        console.error('[ImportPage] Parse error:', err);
+        setError('Failed to parse file. Please ensure it is a valid Excel format. Error: ' + err.message);
       }
       // Reset input so the same file can be selected again
       e.target.value = '';
+    };
+    reader.onerror = (err) => {
+      console.error('[ImportPage] FileReader error:', err);
+      setError('Failed to read file.');
     };
     reader.readAsBinaryString(selectedFile);
   };
 
   const triggerFileInput = () => {
+    console.log('[ImportPage] triggerFileInput called');
     fileInputRef.current?.click();
   };
 
   const handleImport = async () => {
     if (!parsedData.length) return;
     
+    console.log('[ImportPage] Starting import of', parsedData.length, 'doctors');
     setIsProcessing(true);
     try {
-      await api.post('/doctors/bulk', { doctors: parsedData });
+      const response = await api.post('/doctors/bulk', { doctors: parsedData });
+      console.log('[ImportPage] Import response:', response.data);
       toast.success(`Successfully imported ${parsedData.length} doctors!`);
       navigate('/doctors');
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Failed to import doctors');
+      console.error('[ImportPage] Import error:', err.response?.status, err.response?.data);
+      toast.error(err.response?.data?.message || 'Failed to import doctors. Error: ' + (err.message || 'Unknown'));
     } finally {
       setIsProcessing(false);
     }
