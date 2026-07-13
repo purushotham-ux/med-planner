@@ -134,7 +134,6 @@ export function DoctorFormPage() {
         exStationDays,
         latitude: data.latitude ? parseFloat(String(data.latitude)) : undefined,
         longitude: data.longitude ? parseFloat(String(data.longitude)) : undefined,
-        priority: parseInt(String(data.priority)),
         hospital: data.hospital || undefined,
         clinic: data.clinic || undefined,
         areaId: data.areaId || undefined,
