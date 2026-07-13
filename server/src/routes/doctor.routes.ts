@@ -231,49 +231,61 @@ router.post('/bulk', async (req: AuthRequest, res: Response, next: NextFunction)
 
     const userId = req.userId!;
     let successCount = 0;
+    const errors: string[] = [];
 
     // We process sequentially to correctly lookup/create shared areas & beats
     for (const doc of doctorsData) {
-      let areaId = doc.areaId;
-      let beatId = doc.beatId;
+      try {
+        let areaId = doc.areaId;
+        let beatId = doc.beatId;
 
-      // Auto-create Area if provided as a string name instead of ID
-      if (doc.areaName && !areaId) {
-        let area = await prisma.area.findFirst({ where: { name: doc.areaName, userId } });
-        if (!area) {
-          area = await prisma.area.create({ data: { name: doc.areaName, userId } });
+        // Auto-create Area if provided as a string name instead of ID
+        if (doc.areaName && !areaId) {
+          let area = await prisma.area.findFirst({ where: { name: doc.areaName, userId } });
+          if (!area) {
+            area = await prisma.area.create({ data: { name: doc.areaName, userId } });
+          }
+          areaId = area.id;
         }
-        areaId = area.id;
-      }
 
-      // Auto-create Beat if provided as string
-      if (doc.beatName && !beatId && areaId) {
-        let beat = await prisma.beat.findFirst({ where: { name: doc.beatName, areaId, userId } });
-        if (!beat) {
-          beat = await prisma.beat.create({ data: { name: doc.beatName, areaId, userId } });
+        // Auto-create Beat if provided as string
+        if (doc.beatName && !beatId && areaId) {
+          let beat = await prisma.beat.findFirst({ where: { name: doc.beatName, areaId, userId } });
+          if (!beat) {
+            beat = await prisma.beat.create({ data: { name: doc.beatName, areaId, userId } });
+          }
+          beatId = beat.id;
         }
-        beatId = beat.id;
-      }
 
-      await prisma.doctor.create({
-        data: {
-          userId,
-          name: doc.name,
-          speciality: doc.speciality || 'GENERAL_PHYSICIAN',
-          grade: doc.grade || 'B',
-          hospital: doc.hospital,
-          clinic: doc.clinic,
-          areaId,
-          beatId,
-          address: doc.address,
-          phone: doc.phone,
-          status: 'ACTIVE',
-        },
-      });
-      successCount++;
+        await prisma.doctor.create({
+          data: {
+            userId,
+            name: doc.name,
+            speciality: doc.speciality || 'GENERAL_PHYSICIAN',
+            grade: doc.grade || 'B',
+            hospital: doc.hospital || undefined,
+            clinic: doc.clinic || undefined,
+            areaId: areaId || undefined,
+            beatId: beatId || undefined,
+            address: doc.address || undefined,
+            phone: doc.phone || undefined,
+            visitFrequency: doc.visitFrequency ? parseInt(doc.visitFrequency) : 2,
+            notes: doc.notes || undefined,
+            kyc: doc.kyc === true,
+            status: 'ACTIVE',
+          },
+        });
+        successCount++;
+      } catch (docError: any) {
+        errors.push(`Failed to import "${doc.name}": ${docError.message}`);
+      }
     }
 
-    res.status(201).json({ success: true, message: `Imported ${successCount} doctors` });
+    res.status(201).json({
+      success: true,
+      message: `Imported ${successCount} of ${doctorsData.length} doctors`,
+      errors: errors.length > 0 ? errors : undefined,
+    });
   } catch (error) {
     next(error);
   }

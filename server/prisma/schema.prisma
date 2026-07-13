@@ -165,6 +165,7 @@ model Doctor {
   favorite       Boolean      @default(false)
   priority       Int          @default(5) // 1=highest, 10=lowest
   visitFrequency Int          @default(2) // Visits per month: 1, 2, or 3
+  kyc            Boolean      @default(false) // KYC verified doctor
 
   // Linked chemist/pharmacy
   chemistId String?

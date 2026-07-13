@@ -123,6 +123,7 @@ export interface Doctor {
   favorite: boolean;
   priority: number;
   visitFrequency: number; // Visits per month: 1, 2, or 3
+  kyc: boolean; // KYC verified doctor
   chemistId?: string;
   chemist?: { id: string; name: string; pharmacyName?: string };
   visits?: Visit[];
