@@ -19,6 +19,7 @@ export function DoctorsPage() {
   const [areaFilter, setAreaFilter] = useState<string>('');
   const [specFilter, setSpecFilter] = useState<string>('');
   const [dayFilter, setDayFilter] = useState<number>(-1); // -1 = all, 0=Sun..6=Sat
+  const [timeFilter, setTimeFilter] = useState<string>(''); // '', 'morning', 'afternoon', 'evening'
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>('name');
   const [visitDoctor, setVisitDoctor] = useState<Doctor | null>(null);
@@ -85,6 +86,14 @@ export function DoctorsPage() {
         return d.preferredDays.includes(dayFilter);
       });
     }
+    if (timeFilter) {
+      list = list.filter(d => {
+        if (timeFilter === 'morning') return !!(d.morningStart && d.morningEnd);
+        if (timeFilter === 'afternoon') return !!(d.afternoonStart && d.afternoonEnd);
+        if (timeFilter === 'evening') return !!(d.eveningStart && d.eveningEnd);
+        return true;
+      });
+    }
     list.sort((a, b) => {
       switch (sortBy) {
         case 'grade': return a.grade.localeCompare(b.grade);
@@ -95,9 +104,9 @@ export function DoctorsPage() {
       }
     });
     return list;
-  }, [doctors, gradeFilter, areaFilter, specFilter, dayFilter, sortBy]);
+  }, [doctors, gradeFilter, areaFilter, specFilter, dayFilter, timeFilter, sortBy]);
 
-  const activeFilterCount = [gradeFilter, areaFilter, specFilter].filter(Boolean).length + (dayFilter >= 0 ? 1 : 0);
+  const activeFilterCount = [gradeFilter, areaFilter, specFilter, timeFilter].filter(Boolean).length + (dayFilter >= 0 ? 1 : 0);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100dvh', backgroundColor: '#0a0a0f' }}>
@@ -201,6 +210,35 @@ export function DoctorsPage() {
                   </button>
                 );
               })}
+
+              {/* Time-of-day filter pills */}
+              <button onClick={() => setTimeFilter(timeFilter === 'morning' ? '' : 'morning')} style={{
+                padding: '8px 12px', borderRadius: '99px', flexShrink: 0, fontWeight: 600, fontSize: '12px', cursor: 'pointer',
+                backgroundColor: timeFilter === 'morning' ? 'rgba(250,204,21,0.12)' : '#141418',
+                color: timeFilter === 'morning' ? '#facc15' : '#8e8e9e',
+                border: timeFilter === 'morning' ? '1px solid rgba(250,204,21,0.35)' : '1px solid rgba(255,255,255,0.05)',
+                transition: 'all 0.2s'
+              }}>
+                AM
+              </button>
+              <button onClick={() => setTimeFilter(timeFilter === 'afternoon' ? '' : 'afternoon')} style={{
+                padding: '8px 12px', borderRadius: '99px', flexShrink: 0, fontWeight: 600, fontSize: '12px', cursor: 'pointer',
+                backgroundColor: timeFilter === 'afternoon' ? 'rgba(251,146,60,0.12)' : '#141418',
+                color: timeFilter === 'afternoon' ? '#fb923c' : '#8e8e9e',
+                border: timeFilter === 'afternoon' ? '1px solid rgba(251,146,60,0.35)' : '1px solid rgba(255,255,255,0.05)',
+                transition: 'all 0.2s'
+              }}>
+                PM
+              </button>
+              <button onClick={() => setTimeFilter(timeFilter === 'evening' ? '' : 'evening')} style={{
+                padding: '8px 12px', borderRadius: '99px', flexShrink: 0, fontWeight: 600, fontSize: '12px', cursor: 'pointer',
+                backgroundColor: timeFilter === 'evening' ? 'rgba(139,92,246,0.12)' : '#141418',
+                color: timeFilter === 'evening' ? '#a78bfa' : '#8e8e9e',
+                border: timeFilter === 'evening' ? '1px solid rgba(139,92,246,0.35)' : '1px solid rgba(255,255,255,0.05)',
+                transition: 'all 0.2s'
+              }}>
+                Eve
+              </button>
 
               <div style={{ position: 'relative', flexShrink: 0 }}>
                 <select value={sortBy} onChange={(e) => setSortBy(e.target.value as SortOption)} style={{
